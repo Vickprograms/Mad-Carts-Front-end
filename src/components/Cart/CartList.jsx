@@ -18,17 +18,18 @@ const CartList = ({ cart, onUpdateQuantity, onRemoveItem }) => {
     <div className="space-y-3">
       <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
         <ShoppingCart size={24} />
-        Cart Items ({cart.cart_items.length})
+        Cart Items <span className="text-blue-600">({cart.cart_items.length})</span>
       </h2>
-      
-      {cart.cart_items.map((item) => (
-        <CartItem
-          key={item.id}
-          item={item}
-          onUpdateQuantity={onUpdateQuantity}
-          onRemove={onRemoveItem}
-        />
-      ))}
+      <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
+        {cart.cart_items.map((item) => (
+          <CartItem
+            key={item.id}
+            item={item}
+            onUpdateQuantity={onUpdateQuantity}
+            onRemove={onRemoveItem}
+          />
+        ))}
+      </div>
     </div>
   );
 };

@@ -28,31 +28,31 @@ const OrderDetails = ({ order, onBack, getStatusColor, getStatusIcon, getTotalIt
       <div className="flex items-center gap-4 mb-6">
         <button
           onClick={onBack}
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          className="p-2 hover:bg-blue-100 rounded-lg transition-colors border border-blue-200"
         >
-          <ArrowLeft size={20} />
+          <ArrowLeft size={24} className="text-blue-500" />
         </button>
-        <h1 className="text-2xl font-bold text-gray-800">Order Details</h1>
+        <h1 className="text-3xl font-extrabold text-blue-700">Order Details</h1>
       </div>
 
       {/* Order Info Card */}
-      <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
+      <div className="bg-white rounded-xl shadow-lg border-l-4 border-blue-500 p-8 mb-6">
         <div className="grid md:grid-cols-2 gap-6">
           <div>
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Order Information</h2>
+            <h2 className="text-xl font-bold text-gray-800 mb-4">Order Information</h2>
             <div className="space-y-3">
               <div className="flex items-center gap-2">
-                <Package size={16} className="text-gray-500" />
+                <Package size={18} className="text-gray-500" />
                 <span className="text-sm text-gray-600">Order ID:</span>
                 <span className="text-sm font-mono">{order.id}</span>
               </div>
               <div className="flex items-center gap-2">
-                <Calendar size={16} className="text-gray-500" />
+                <Calendar size={18} className="text-gray-500" />
                 <span className="text-sm text-gray-600">Created:</span>
                 <span className="text-sm">{formatDate(order.created_at)}</span>
               </div>
               <div className="flex items-center gap-2">
-                <User size={16} className="text-gray-500" />
+                <User size={18} className="text-gray-500" />
                 <span className="text-sm text-gray-600">User ID:</span>
                 <span className="text-sm font-mono">{order.user_id}</span>
               </div>
@@ -60,11 +60,12 @@ const OrderDetails = ({ order, onBack, getStatusColor, getStatusIcon, getTotalIt
           </div>
           
           <div>
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Order Summary</h2>
+            <h2 className="text-xl font-bold text-gray-800 mb-4">Order Summary</h2>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-gray-600">Status:</span>
-                <div className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(order.status)}`}>
+                <div className={`px-3 py-1 rounded-full text-sm font-bold shadow ${getStatusColor(order.status)}`}
+                  style={{ minWidth: 100, textAlign: 'center' }}>
                   <span className="mr-1">{getStatusIcon(order.status)}</span>
                   {order.status}
                 </div>
@@ -75,8 +76,8 @@ const OrderDetails = ({ order, onBack, getStatusColor, getStatusIcon, getTotalIt
               </div>
               <div className="flex justify-between items-center text-lg">
                 <span className="font-semibold text-gray-800">Total Amount:</span>
-                <span className="font-bold text-green-600 flex items-center gap-1">
-                  <DollarSign size={16} />
+                <span className="font-extrabold text-green-600 flex items-center gap-1 text-2xl">
+                  <DollarSign size={20} />
                   {order.total_amount.toFixed(2)}
                 </span>
               </div>
@@ -86,12 +87,12 @@ const OrderDetails = ({ order, onBack, getStatusColor, getStatusIcon, getTotalIt
       </div>
 
       {/* Order Items */}
-      <div className="bg-white rounded-lg shadow-sm border p-6">
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">Order Items</h2>
+      <div className="bg-white rounded-xl shadow border p-8">
+        <h2 className="text-xl font-bold text-gray-800 mb-4">Order Items</h2>
         <div className="space-y-4">
           {order.order_items && order.order_items.length > 0 ? (
             order.order_items.map((item, index) => (
-              <div key={item.id || index} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
+              <div key={item.id || index} className="border-l-4 border-blue-200 rounded-lg p-4 hover:bg-blue-50 transition-colors">
                 <div className="flex justify-between items-center">
                   <div>
                     <h3 className="font-medium text-gray-800 mb-1">

@@ -1,0 +1,136 @@
+/* Navbar Styles */
+.navbar {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    height: 70px;
+}
+
+.navbar-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    padding: 0 20px;
+}
+
+/* Logo */
+.navbar-logo a {
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.2s ease;
+}
+
+.navbar-logo a:hover {
+    transform: scale(1.05);
+}
+
+/* Navigation Links */
+.navbar-links {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+}
+
+.navbar-link {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 10px 20px;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.navbar-link:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.navbar-link.active {
+    background: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+}
+
+/* User Section */
+.navbar-user {
+    display: flex;
+    align-items: center;
+}
+
+.user-info {
+    color: white;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.user-info:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .navbar-container {
+        padding: 0 15px;
+    }
+    
+    .navbar-logo a {
+        font-size: 20px;
+    }
+    
+    .navbar-links {
+        gap: 15px;
+    }
+    
+    .navbar-link {
+        font-size: 14px;
+        padding: 8px 15px;
+    }
+    
+    .user-info {
+        font-size: 14px;
+        padding: 8px 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar-links {
+        gap: 10px;
+    }
+    
+    .navbar-link {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+    
+    .user-info {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+}
+
+/* Body padding to account for fixed navbar */
+body {
+    padding-top: 70px;
+}

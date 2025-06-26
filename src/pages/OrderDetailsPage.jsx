@@ -6,6 +6,17 @@ import OrderDetails from '../components/Orders/OrderDetails';
 import { RefreshCw, AlertCircle } from 'lucide-react';
 import '../styles/orders.css';
 
+// Simple Toast component
+function Toast({ message, onClose }) {
+  if (!message) return null;
+  return (
+    <div style={{ position: 'fixed', top: 20, right: 20, background: '#38bdf8', color: 'white', padding: '16px 24px', borderRadius: 8, zIndex: 1000 }}>
+      {message}
+      <button onClick={onClose} style={{ marginLeft: 16, background: 'transparent', color: 'white', border: 'none', fontWeight: 'bold', cursor: 'pointer' }}>✕</button>
+    </div>
+  );
+}
+
 const OrderDetailsPage = () => {
   const {
     orders,
@@ -21,6 +32,12 @@ const OrderDetailsPage = () => {
   } = useOrders();
 
   const [view, setView] = useState('list'); // 'list' or 'details'
+  const [toast, setToast] = useState('');
+
+  // Show a toast if error occurs
+  useEffect(() => {
+    if (error) setToast(error);
+  }, [error]);
 
   // View order details
   const handleViewDetails = async (orderId) => {
@@ -41,6 +58,7 @@ const OrderDetailsPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
+      <Toast message={toast} onClose={() => setToast('')} />
       <div className="max-w-6xl mx-auto">
         {view === 'list' ? (
           <>

@@ -1,6 +1,6 @@
 // src/components/Cart/CartSummary.jsx
 import React from 'react';
-import { Calculator } from 'lucide-react';
+import { Calculator, Receipt } from 'lucide-react';
 
 const CartSummary = ({ cart, totalAmount, totalItems }) => {
   if (!cart || !cart.cart_items || cart.cart_items.length === 0) {
@@ -8,9 +8,9 @@ const CartSummary = ({ cart, totalAmount, totalItems }) => {
   }
 
   return (
-    <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-6 border">
-      <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
-        <Calculator size={20} />
+    <div className="bg-gradient-to-br from-blue-100 to-purple-100 rounded-xl p-8 border shadow-md">
+      <h3 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+        <Receipt size={24} className="text-purple-500" />
         Cart Summary
       </h3>
       
@@ -28,7 +28,7 @@ const CartSummary = ({ cart, totalAmount, totalItems }) => {
         <div className="border-t pt-3">
           <div className="flex justify-between items-center">
             <span className="text-lg font-semibold text-gray-800">Total Amount:</span>
-            <span className="text-2xl font-bold text-green-600">${totalAmount.toFixed(2)}</span>
+            <span className="text-3xl font-extrabold text-green-600">${totalAmount.toFixed(2)}</span>
           </div>
         </div>
 
