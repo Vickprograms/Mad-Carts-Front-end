@@ -1,9 +1,8 @@
-// src/api/cartAPI.js
 const API_BASE = 'http://localhost:5000/api';
 
 
 export const cartAPI = {
-  // Get all carts
+  
   getCarts: async () => {
     try {
       const response = await fetch(`${API_BASE}/carts`);
@@ -15,7 +14,6 @@ export const cartAPI = {
     }
   },
 
-  // Get one cart by ID
   getCart: async (id) => {
     try {
       const response = await fetch(`${API_BASE}/carts/${id}`);
@@ -27,7 +25,6 @@ export const cartAPI = {
     }
   },
 
-  // Create a new cart
   createCart: async (cartData) => {
     try {
       const response = await fetch(`${API_BASE}/carts`, {
@@ -45,7 +42,6 @@ export const cartAPI = {
     }
   },
 
-  // Update a cart
   updateCart: async (id, cartData) => {
     try {
       const response = await fetch(`${API_BASE}/carts/${id}`, {
@@ -63,13 +59,12 @@ export const cartAPI = {
     }
   },
 
-  // Delete a cart
 deleteCart: async (id) => {
   try {
     const response = await fetch(`${API_BASE}/carts/${id}`, {
       method: 'DELETE',
       headers: {
-        'Content-Type': 'application/json'  // 💥 this is the missing piece
+        'Content-Type': 'application/json'
       }
     });
     if (!response.ok) throw new Error('Failed to delete cart');

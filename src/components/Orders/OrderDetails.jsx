@@ -1,4 +1,3 @@
-// src/components/Orders/OrderDetails.jsx
 import React from 'react';
 import { ArrowLeft, Package, Calendar, DollarSign, User } from 'lucide-react';
 
@@ -15,106 +14,89 @@ const OrderDetails = ({ order, onBack, getStatusColor, getStatusIcon, getTotalIt
 
   if (!order) {
     return (
-      <div className="text-center py-12">
-        <Package size={64} className="mx-auto text-gray-300 mb-4" />
-        <h3 className="text-xl font-semibold text-gray-600">Order not found</h3>
+      <div className="order-details-empty">
+        <Package size={64} />
+        <h3>Order not found</h3>
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="order-details">
       {/* Header */}
-      <div className="flex items-center gap-4 mb-6">
+      <div className="order-details-header">
         <button
           onClick={onBack}
-          className="p-2 hover:bg-blue-100 rounded-lg transition-colors border border-blue-200"
+          className="order-details-back-btn"
         >
-          <ArrowLeft size={24} className="text-blue-500" />
+          <ArrowLeft size={24} />
         </button>
-        <h1 className="text-3xl font-extrabold text-blue-700">Order Details</h1>
+        <h1 className="order-details-title">Order Details</h1>
       </div>
-
       {/* Order Info Card */}
-      <div className="bg-white rounded-xl shadow-lg border-l-4 border-blue-500 p-8 mb-6">
-        <div className="grid md:grid-cols-2 gap-6">
+      <div className="order-info-card">
+        <div className="order-info-grid">
           <div>
-            <h2 className="text-xl font-bold text-gray-800 mb-4">Order Information</h2>
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <Package size={18} className="text-gray-500" />
-                <span className="text-sm text-gray-600">Order ID:</span>
-                <span className="text-sm font-mono">{order.id}</span>
+            <h2 className="order-info-section-title">Order Information</h2>
+            <div className="order-info-section">
+              <div className="order-info-item">
+                <Package size={18} />
+                <span>Order ID:</span>
+                <span className="order-info-value">{order.id}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Calendar size={18} className="text-gray-500" />
-                <span className="text-sm text-gray-600">Created:</span>
-                <span className="text-sm">{formatDate(order.created_at)}</span>
+              <div className="order-info-item">
+                <Calendar size={18} />
+                <span>Created:</span>
+                <span>{formatDate(order.created_at)}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <User size={18} className="text-gray-500" />
-                <span className="text-sm text-gray-600">User ID:</span>
-                <span className="text-sm font-mono">{order.user_id}</span>
+              <div className="order-info-item">
+                <User size={18} />
+                <span>User ID:</span>
+                <span className="order-info-value">{order.user_id}</span>
               </div>
             </div>
           </div>
-          
           <div>
-            <h2 className="text-xl font-bold text-gray-800 mb-4">Order Summary</h2>
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-gray-600">Status:</span>
-                <div className={`px-3 py-1 rounded-full text-sm font-bold shadow ${getStatusColor(order.status)}`}
-                  style={{ minWidth: 100, textAlign: 'center' }}>
-                  <span className="mr-1">{getStatusIcon(order.status)}</span>
+            <h2 className="order-info-section-title">Order Summary</h2>
+            <div className="order-info-section">
+              <div className="order-info-item">
+                <span>Status:</span>
+                <div className={`order-status-badge ${getStatusColor(order.status)}`}>
+                  <span>{getStatusIcon(order.status)}</span>
                   {order.status}
                 </div>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-gray-600">Total Items:</span>
-                <span className="font-semibold">{getTotalItems(order)}</span>
+              <div className="order-info-item">
+                <span>Total Items:</span>
+                <span>{getTotalItems(order)}</span>
               </div>
-              <div className="flex justify-between items-center text-lg">
-                <span className="font-semibold text-gray-800">Total Amount:</span>
-                <span className="font-extrabold text-green-600 flex items-center gap-1 text-2xl">
-                  <DollarSign size={20} />
-                  {order.total_amount.toFixed(2)}
-                </span>
+              <div className="order-info-item order-info-total">
+                <span>Total Amount:</span>
+                <span>${order.total_amount.toFixed(2)}</span>
               </div>
             </div>
           </div>
         </div>
       </div>
-
       {/* Order Items */}
-      <div className="bg-white rounded-xl shadow border p-8">
-        <h2 className="text-xl font-bold text-gray-800 mb-4">Order Items</h2>
-        <div className="space-y-4">
+      <div className="order-items-card">
+        <h2 className="order-items-title">Order Items</h2>
+        <div className="order-items-list">
           {order.order_items && order.order_items.length > 0 ? (
             order.order_items.map((item, index) => (
-              <div key={item.id || index} className="border-l-4 border-blue-200 rounded-lg p-4 hover:bg-blue-50 transition-colors">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <h3 className="font-medium text-gray-800 mb-1">
-                      Product ID: {item.product_id}
-                    </h3>
-                    <p className="text-sm text-gray-600">
-                      ${item.price.toFixed(2)} × {item.quantity}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-semibold text-gray-800">
-                      ${(item.price * item.quantity).toFixed(2)}
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      Qty: {item.quantity}
-                    </p>
-                  </div>
+              <div key={item.id || index} className="order-item">
+                <div className="order-item-info">
+                  <h3>Product ID: {item.product_id}</h3>
+                  <p>${item.price.toFixed(2)} × {item.quantity}</p>
+                </div>
+                <div className="order-item-total">
+                  <p>${(item.price * item.quantity).toFixed(2)}</p>
+                  <p>Qty: {item.quantity}</p>
                 </div>
               </div>
             ))
           ) : (
-            <p className="text-gray-500 text-center py-4">No items in this order</p>
+            <p className="order-items-empty">No items in this order</p>
           )}
         </div>
       </div>

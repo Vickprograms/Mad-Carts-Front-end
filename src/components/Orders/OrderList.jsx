@@ -1,4 +1,3 @@
-// src/components/Orders/OrderList.jsx
 import React from 'react';
 import OrderCard from './OrderCard';
 import { Package } from 'lucide-react';
@@ -15,13 +14,12 @@ const OrderList = ({ orders, onViewDetails, getStatusColor, getStatusIcon, getTo
   }
 
   return (
-    <div>
-      <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+    <div className="order-list">
+      <h2 className="order-list-header">
         <Package size={24} />
-        Your Orders <span className="text-blue-600">({orders.length})</span>
+        Your Orders <span className="order-list-count">({orders.length})</span>
       </h2>
-      
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="order-list-grid">
         {orders.map((order) => (
           <OrderCard
             key={order.id}

@@ -1,4 +1,3 @@
-// src/components/AddToCartButton.jsx
 import React, { useState } from 'react';
 import useCartLogic from '../hooks/useCart';
 

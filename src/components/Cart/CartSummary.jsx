@@ -1,4 +1,3 @@
-// src/components/Cart/CartSummary.jsx
 import React from 'react';
 import { Calculator, Receipt } from 'lucide-react';
 
@@ -8,37 +7,27 @@ const CartSummary = ({ cart, totalAmount, totalItems }) => {
   }
 
   return (
-    <div className="bg-gradient-to-br from-blue-100 to-purple-100 rounded-xl p-8 border shadow-md">
-      <h3 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-        <Receipt size={24} className="text-purple-500" />
+    <div className="cart-summary">
+      <h3 className="cart-summary-header">
+        <Receipt size={24} />
         Cart Summary
       </h3>
-      
-      <div className="space-y-3">
-        <div className="flex justify-between items-center">
-          <span className="text-gray-600">Total Items:</span>
-          <span className="font-semibold text-gray-800">{totalItems}</span>
+      <div className="cart-summary-section">
+        <div>
+          <span>Total Items:</span>
+          <span>{totalItems}</span>
         </div>
-        
-        <div className="flex justify-between items-center">
-          <span className="text-gray-600">Subtotal:</span>
-          <span className="font-semibold text-gray-800">${totalAmount.toFixed(2)}</span>
+        <div>
+          <span>Subtotal:</span>
+          <span>${totalAmount.toFixed(2)}</span>
         </div>
-        
-        <div className="border-t pt-3">
-          <div className="flex justify-between items-center">
-            <span className="text-lg font-semibold text-gray-800">Total Amount:</span>
-            <span className="text-3xl font-extrabold text-green-600">${totalAmount.toFixed(2)}</span>
-          </div>
+        <div className="cart-summary-total">
+          <span>Total Amount:</span>
+          <span>${totalAmount.toFixed(2)}</span>
         </div>
-
-        <div className="mt-4 p-3 bg-white rounded-lg">
-          <p className="text-sm text-gray-600">
-            Created: {new Date(cart.created_at).toLocaleDateString()}
-          </p>
-          <p className="text-sm text-gray-600">
-            Cart ID: {cart.id}
-          </p>
+        <div className="cart-summary-meta">
+          <p>Created: {new Date(cart.created_at).toLocaleDateString()}</p>
+          <p>Cart ID: {cart.id}</p>
         </div>
       </div>
     </div>

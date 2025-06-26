@@ -1,4 +1,3 @@
-// src/hooks/useCart.js
 import { useState, useEffect } from 'react';
 import { cartAPI } from '../api/cartAPI';
 
@@ -8,7 +7,6 @@ export const useCart = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Fetch all carts
   const fetchCarts = async () => {
     setLoading(true);
     setError(null);
@@ -22,7 +20,6 @@ export const useCart = () => {
     }
   };
 
-  // Fetch single cart
   const fetchCart = async (cartId) => {
     setLoading(true);
     setError(null);
@@ -37,7 +34,6 @@ export const useCart = () => {
     }
   };
 
-  // Create new cart
   const createCart = async (cartData) => {
     setLoading(true);
     setError(null);
@@ -53,7 +49,6 @@ export const useCart = () => {
     }
   };
 
-  // Update cart
   const updateCart = async (cartId, cartData) => {
     setLoading(true);
     setError(null);
@@ -74,7 +69,6 @@ export const useCart = () => {
     }
   };
 
-  // Delete cart
   const deleteCart = async (cartId) => {
     setLoading(true);
     setError(null);
@@ -92,7 +86,6 @@ export const useCart = () => {
     }
   };
 
-  // Calculate cart total
   const calculateCartTotal = (cart) => {
     if (!cart || !cart.cart_items) return 0;
     return cart.cart_items.reduce((total, item) => {
@@ -100,7 +93,6 @@ export const useCart = () => {
     }, 0);
   };
 
-  // Get total items in cart
   const getTotalItems = (cart) => {
     if (!cart || !cart.cart_items) return 0;
     return cart.cart_items.reduce((total, item) => {
@@ -108,7 +100,6 @@ export const useCart = () => {
     }, 0);
   };
 
-  // Load carts on hook initialization
   useEffect(() => {
     fetchCarts();
   }, []);

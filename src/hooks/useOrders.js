@@ -1,4 +1,3 @@
-// src/hooks/useOrders.js
 import { useState, useEffect } from 'react';
 import { ordersAPI } from '../api/ordersAPI';
 
@@ -8,7 +7,7 @@ export const useOrders = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Fetch all orders
+
   const fetchOrders = async () => {
     setLoading(true);
     setError(null);
@@ -22,7 +21,6 @@ export const useOrders = () => {
     }
   };
 
-  // Fetch single order
   const fetchOrder = async (orderId) => {
     setLoading(true);
     setError(null);
@@ -37,7 +35,6 @@ export const useOrders = () => {
     }
   };
 
-  // Create new order
   const createOrder = async (orderData) => {
     setLoading(true);
     setError(null);
@@ -53,7 +50,6 @@ export const useOrders = () => {
     }
   };
 
-  // Update order
   const updateOrder = async (orderData) => {
     setLoading(true);
     setError(null);
@@ -74,7 +70,6 @@ export const useOrders = () => {
     }
   };
 
-  // Delete order
   const deleteOrder = async (orderId) => {
     setLoading(true);
     setError(null);
@@ -92,7 +87,6 @@ export const useOrders = () => {
     }
   };
 
-  // Get order status color
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
       case 'pending':
@@ -106,21 +100,19 @@ export const useOrders = () => {
     }
   };
 
-  // Get order status icon
   const getStatusIcon = (status) => {
     switch (status?.toLowerCase()) {
       case 'pending':
-        return '⏳';
+        return ;
       case 'shipped':
-        return '🚚';
+        return;
       case 'delivered':
-        return '✅';
+        return ;
       default:
-        return '📦';
+        return ;
     }
   };
 
-  // Calculate total items in order
   const getTotalItems = (order) => {
     if (!order || !order.order_items) return 0;
     return order.order_items.reduce((total, item) => {
@@ -128,7 +120,6 @@ export const useOrders = () => {
     }, 0);
   };
 
-  // Load orders on hook initialization
   useEffect(() => {
     fetchOrders();
   }, []);

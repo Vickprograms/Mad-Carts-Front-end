@@ -1,9 +1,8 @@
-// src/api/ordersAPI.js
 const API_BASE = 'http://localhost:5000/api';
 
 
 export const ordersAPI = {
-  // Get all orders
+  
   getOrders: async () => {
     try {
       const response = await fetch(`${API_BASE}/orders`);
@@ -15,7 +14,6 @@ export const ordersAPI = {
     }
   },
 
-  // Get single order by ID
   getOrderById: async (orderId) => {
     try {
       const response = await fetch(`${API_BASE}/orders/single`, {
@@ -33,7 +31,6 @@ export const ordersAPI = {
     }
   },
 
-  // Create a new order
   createOrder: async (orderData) => {
     try {
       const response = await fetch(`${API_BASE}/orders`, {
@@ -51,7 +48,6 @@ export const ordersAPI = {
     }
   },
 
-  // Update an order
   updateOrder: async (orderData) => {
     try {
       const response = await fetch(`${API_BASE}/orders/update`, {
@@ -69,7 +65,6 @@ export const ordersAPI = {
     }
   },
 
-  // Delete an order
   deleteOrder: async (orderId) => {
     try {
       const response = await fetch(`${API_BASE}/orders/delete`, {
