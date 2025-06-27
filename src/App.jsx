@@ -1,5 +1,6 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Home from './pages/Home';
@@ -10,15 +11,25 @@ import DashboardCustomer from './pages/DashboardCustomer';
 import DashboardDriver from './pages/DashboardDriver';
 import Unauthorized from './pages/Unauthorized';
 
+import CartPage from './pages/CartPage';
+import OrderDetailsPage from './pages/OrderDetailsPage';
+
 function App() {
   return (
-    <BrowserRouter>
+    <Router>
       <Navbar />
       <Routes>
+        {/* Public routes */}
         <Route path="/" element={<Home />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/unauthorized" element={<Unauthorized />} />
 
+        {/* Cart and Orders */}
+        <Route path="/cart" element={<CartPage />} />
+        <Route path="/orders/:orderId" element={<OrderDetailsPage />} />
+
+        {/* Protected dashboard routes */}
         <Route
           path="/admin"
           element={
@@ -44,10 +55,12 @@ function App() {
           }
         />
 
-        <Route path="/unauthorized" element={<Unauthorized />} />
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-    </BrowserRouter>
+    </Router>
   );
 }
 
 export default App;
+
