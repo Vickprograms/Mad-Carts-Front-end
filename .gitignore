@@ -27,12 +27,12 @@ build/
 .vscode/
 !.vscode/extensions.json
 .idea
+
+# OS files
 .DS_Store
+Thumbs.db
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
-
-# OS stuff
-Thumbs.db
