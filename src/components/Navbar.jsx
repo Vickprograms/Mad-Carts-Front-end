@@ -1,18 +1,18 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
+import { FaShoppingCart, FaUser, FaPalette } from 'react-icons/fa';
+import '../styles/navbar.css';
 
-const Navbar = () => (
-  <nav className="bg-white shadow px-6 py-3 flex justify-between items-center">
-    <h1 className="text-xl font-semibold text-gray-800">Mad-Carts</h1>
-    <div>
-      <Link
-        to="/"
-        className="text-blue-600 hover:underline font-medium text-sm"
-      >
-        Logout
-      </Link>
-    </div>
-  </nav>
-);
-
-export default Navbar;
+export default function Navbar() {
+  return (
+    <nav className="navbar">
+      <div className="container">
+        <Link to="/" className="logo">Mad Carts</Link>
+        <div className="nav-links">
+          <Link to="/products">Products</Link>
+          <Link to="/design-preview">Design</Link>
+          <Link to="/cart"><FaShoppingCart /></Link>
+        </div>
+      </div>
+    </nav>
+  );
+}
