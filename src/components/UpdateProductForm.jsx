@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import Searchbar from "./Searchbar"; // Assumes it accepts onSelectProduct
+import Searchbar from "./Searchbar"; 
 
 const UpdateProductForm = ({ selectedProduct, setSelectedProduct }) => {
   const [formState, setFormState] = useState({});
@@ -47,7 +47,7 @@ const UpdateProductForm = ({ selectedProduct, setSelectedProduct }) => {
         }
       );
       setSuccessMessage("Product updated successfully!");
-      setSelectedProduct(response.data); // Update with latest data
+      setSelectedProduct(response.data); 
     } catch (error) {
       console.error("Update failed:", error);
     }
@@ -56,74 +56,93 @@ const UpdateProductForm = ({ selectedProduct, setSelectedProduct }) => {
   return (
     <div>
       <h2>Update Product</h2>
+      <div className="update-input-container">
       <Searchbar isAdmin={false} onSelectProduct={setSelectedProduct} />
 
       {selectedProduct && (
-        <form onSubmit={handleSubmit} className="space-y-2">
+        <form onSubmit={handleSubmit} className="update-form">
           <p><strong>ID:</strong> {selectedProduct.id}</p>
-
+          
+          <label htmlFor="name">name:</label>
           <input
             type="text"
+            id="name"
             name="name"
             placeholder="Name"
             defaultValue={selectedProduct.name}
             onChange={handleInputChange}
           />
-
+          
+          <label htmlFor="category">category:</label>
           <input
             type="text"
+            id="category"
             name="category"
             placeholder="Category"
             defaultValue={selectedProduct.category}
             onChange={handleInputChange}
           />
-
+          
+          <label htmlFor="price">price:</label>
           <input
             type="number"
+            id="price"
             name="price"
             placeholder="Price"
             defaultValue={selectedProduct.price}
             onChange={handleInputChange}
           />
+          
 
+          <label htmlFor="quantity">quantity:</label>
           <input
             type="number"
+            id="quantity"
             name="quantity"
             placeholder="Quantity"
             defaultValue={selectedProduct.quantity}
             onChange={handleInputChange}
           />
+          
 
+            <label htmlFor="size">size:</label>
           <input
             type="text"
+            id="size"
             name="size"
             placeholder="Size"
             defaultValue={selectedProduct.size}
             onChange={handleInputChange}
           />
-
+          
+          <label htmlFor="brand">brand:</label>
           <input
             type="text"
+            id="brand"
             name="brand"
             placeholder="Brand"
             defaultValue={selectedProduct.brand}
             onChange={handleInputChange}
           />
-
+          
+            <label htmlFor="description">description:</label>
           <textarea
             name="description"
+            id="description"
             placeholder="Description"
             defaultValue={selectedProduct.description}
             onChange={handleInputChange}
           />
 
-          <input type="file" name="image" accept="image/*" onChange={handleImageChange} />
+          <label htmlFor="image">image:</label> 
+          <input type="file" name="image" accept="image/*" placeholder="📸" onChange={handleImageChange} />
 
           <button type="submit" className="btn">Update</button>
 
           {successMessage && <p className="text-green-500">{successMessage}</p>}
         </form>
       )}
+      </div>
     </div>
   );
 };
