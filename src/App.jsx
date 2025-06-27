@@ -36,7 +36,7 @@ function App() {
           }
         />
         <Route
-          path="/driver"
+          path="/driver-dashboard"
           element={
             <ProtectedRoute allowedRoles={['driver']}>
               <DashboardDriver />

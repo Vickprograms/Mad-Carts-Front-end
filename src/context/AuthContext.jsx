@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
 const AuthContext = createContext();
 
@@ -9,15 +9,24 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      const decoded = jwtDecode(token);
-      setUser({ id: decoded.sub, role: decoded.role });
+      try {
+        const decoded = jwtDecode(token);
+        setUser({ id: decoded.sub, role: decoded.role });
+      } catch (error) {
+        console.error("Invalid token:", error);
+        localStorage.removeItem('token');
+      }
     }
   }, []);
 
   const login = (token) => {
-    const decoded = jwtDecode(token);
-    setUser({ id: decoded.sub, role: decoded.role });
-    localStorage.setItem('token', token);
+    try {
+      const decoded = jwtDecode(token);
+      setUser({ id: decoded.sub, role: decoded.role });
+      localStorage.setItem('token', token);
+    } catch (error) {
+      console.error("Login failed: invalid token", error);
+    }
   };
 
   const logout = () => {
@@ -33,3 +42,5 @@ export const AuthProvider = ({ children }) => {
 };
 
 export const useAuth = () => useContext(AuthContext);
+
+export default AuthContext;
