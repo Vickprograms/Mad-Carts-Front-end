@@ -19,6 +19,8 @@ function Toast({ message, onClose }) {
 }
 
 function SuccessModal({ orderId, onClose, loading }) {
+  const navigate = useNavigate();
+  
   return (
     <div style={{
       position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.3)', zIndex: 2000,
@@ -34,13 +36,12 @@ function SuccessModal({ orderId, onClose, loading }) {
         {loading ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
             <Loader2 className="animate-spin" size={24} />
-            <span style={{ color: '#2563eb' }}>Redirecting to order details...</span>
+            <span style={{ color: '#2563eb' }}>Redirecting to orders...</span>
           </div>
         ) : null}
         <div style={{ display: 'flex', gap: 12, marginTop: 8 }}>
-          <button onClick={onClose} style={{ flex: 1, padding: 10, background: '#f3f4f6', color: '#374151', border: 'none', borderRadius: 8, fontWeight: 600 }}>Back to Shopping</button>
-          <a href={`/orders/${orderId}`} style={{ flex: 1, padding: 10, background: '#2563eb', color: 'white', border: 'none', borderRadius: 8, fontWeight: 600, textAlign: 'center', textDecoration: 'none' }}>View Order</a>
-          <a href="/orders" style={{ flex: 1, padding: 10, background: '#6366f1', color: 'white', border: 'none', borderRadius: 8, fontWeight: 600, textAlign: 'center', textDecoration: 'none' }}>View All Orders</a>
+          <button onClick={() => navigate('/')} style={{ flex: 1, padding: 10, background: '#f3f4f6', color: '#374151', border: 'none', borderRadius: 8, fontWeight: 600 }}>Back to Shopping</button>
+          <button onClick={() => navigate('/orders')} style={{ flex: 1, padding: 10, background: '#2563eb', color: 'white', border: 'none', borderRadius: 8, fontWeight: 600 }}>View Orders</button>
         </div>
       </div>
     </div>
@@ -64,16 +65,15 @@ function ErrorModal({ message, onClose }) {
 
 const CartPage = () => {
   const {
-    carts,
     currentCart,
     loading: cartLoading,
     error: cartError,
-    fetchCarts,
-    updateCart,
-    deleteCart,
+    fetchMyCart,
+    updateItemQuantity,
+    removeItem,
+    clearCart,
     calculateCartTotal,
-    getTotalItems,
-    setCurrentCart
+    getTotalItems
   } = useCart();
 
   const {
@@ -90,32 +90,30 @@ const CartPage = () => {
   const [redirecting, setRedirecting] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
-  React.useEffect(() => {
-    if (carts.length > 0) {
-      setCurrentCart(carts[0]);
-    } else {
-      setCurrentCart(null);
-    }
-  }, [carts, setCurrentCart]);
-
-  const handleUpdateQuantity = (itemId, newQuantity) => {
+  const handleUpdateQuantity = async (itemId, newQuantity) => {
     if (!currentCart) return;
-    const updatedCart = {
-      ...currentCart,
-      cart_items: currentCart.cart_items.map(item =>
-        item.id === itemId ? { ...item, quantity: newQuantity } : item
-      )
-    };
-    setCurrentCart(updatedCart);
+    try {
+      const item = currentCart.cart_items.find(item => item.id === itemId);
+      if (item) {
+        await updateItemQuantity(item.product_id, newQuantity);
+        await fetchMyCart();
+      }
+    } catch (error) {
+      setToast('Failed to update quantity. Please try again.');
+    }
   };
 
-  const handleRemoveItem = (itemId) => {
+  const handleRemoveItem = async (itemId) => {
     if (!currentCart) return;
-    const updatedCart = {
-      ...currentCart,
-      cart_items: currentCart.cart_items.filter(item => item.id !== itemId)
-    };
-    setCurrentCart(updatedCart);
+    try {
+      const item = currentCart.cart_items.find(item => item.id === itemId);
+      if (item) {
+        await removeItem(item.product_id);
+        await fetchMyCart();
+      }
+    } catch (error) {
+      setToast('Failed to remove item. Please try again.');
+    }
   };
 
   const handleCheckout = async (cart) => {
@@ -130,14 +128,15 @@ const CartPage = () => {
         }))
       };
       const newOrder = await createOrder(orderData);
-      await deleteCart(cart.id);
-      setCurrentCart(null);
+      await clearCart();
       setOrderId(newOrder.id);
       setShowSuccess(true);
       setRedirecting(true);
+      
       setTimeout(() => {
         setRedirecting(false);
-        window.location.href = `/orders/${newOrder.id}`;
+        setShowSuccess(false);
+        navigate('/orders');
       }, 2000);
     } catch (error) {
       setErrorMsg(error.message || 'Failed to create order. Please try again.');
@@ -145,10 +144,9 @@ const CartPage = () => {
     }
   };
 
-  const handleClearCart = async (cartId) => {
+  const handleClearCart = async () => {
     try {
-      await deleteCart(cartId);
-      setCurrentCart(null);
+      await clearCart();
       setToast('Cart cleared!');
     } catch (error) {
       setToast('Failed to clear cart. Please try again.');
@@ -160,7 +158,7 @@ const CartPage = () => {
 
   return (
     <div className="cart-page">
-      {showSuccess && <SuccessModal orderId={orderId} loading={redirecting} onClose={() => { setShowSuccess(false); window.location.href = '/'; }} />}
+      {showSuccess && <SuccessModal orderId={orderId} loading={redirecting} onClose={() => { setShowSuccess(false); navigate('/'); }} />}
       {showError && <ErrorModal message={errorMsg} onClose={() => setShowError(false)} />}
       <div className="cart-container">
         <div className="cart-header">

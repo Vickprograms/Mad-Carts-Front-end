@@ -1,101 +1,108 @@
 import { useState, useEffect } from 'react';
-import { cartAPI } from '../api/cartAPI';
+import { useAuth } from '../context/AuthContext';
+import { getCart, createCart, addItemToCart, updateCartItem, removeCartItem, deleteCart } from '../api/cartAPI';
 
 export const useCart = () => {
-  const [carts, setCarts] = useState([]);
   const [currentCart, setCurrentCart] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const { user } = useAuth();
 
-  const fetchCarts = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await cartAPI.getCarts();
-      setCarts(data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
+  const fetchMyCart = async () => {
+    if (!user) {
+      return;
     }
-  };
 
-  const fetchCart = async (cartId) => {
     setLoading(true);
     setError(null);
-    try {
-      const data = await cartAPI.getCart(cartId);
-      setCurrentCart(data);
-      return data;
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  const createCart = async (cartData) => {
-    setLoading(true);
-    setError(null);
     try {
-      const newCart = await cartAPI.createCart(cartData);
-      setCarts(prev => [...prev, newCart]);
-      return newCart;
-    } catch (err) {
-      setError(err.message);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const updateCart = async (cartId, cartData) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const updatedCart = await cartAPI.updateCart(cartId, cartData);
-      setCarts(prev => prev.map(cart => 
-        cart.id === cartId ? updatedCart : cart
-      ));
-      if (currentCart && currentCart.id === cartId) {
-        setCurrentCart(updatedCart);
-      }
-      return updatedCart;
-    } catch (err) {
-      setError(err.message);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const deleteCart = async (cartId) => {
-    setLoading(true);
-    setError(null);
-    try {
-      await cartAPI.deleteCart(cartId);
-      setCarts(prev => prev.filter(cart => cart.id !== cartId));
-      if (currentCart && currentCart.id === cartId) {
+      const data = await getCart();
+      
+      if (data.message) {
+        setCurrentCart(null);
+      } else if (data.cart_items && Array.isArray(data.cart_items)) {
+        setCurrentCart(data);
+      } else {
         setCurrentCart(null);
       }
     } catch (err) {
       setError(err.message);
-      throw err;
+      
+      try {
+        const newCart = await createCart();
+        setCurrentCart(newCart);
+      } catch (createErr) {
+        setError(createErr.message);
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  const addItem = async (itemData) => {
+  const addItem = async (productId, quantity = 1) => {
+    if (!currentCart) return;
+    
     setLoading(true);
     setError(null);
+
     try {
-      const updatedCart = await cartAPI.addItemToCart(itemData);
+      const updatedCart = await addItemToCart(productId, quantity);
       setCurrentCart(updatedCart);
-      return updatedCart;
     } catch (err) {
       setError(err.message);
-      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateItemQuantity = async (productId, quantity) => {
+    if (!currentCart) return;
+    
+    setLoading(true);
+    setError(null);
+
+    try {
+      const updatedCart = await updateCartItem(productId, quantity);
+      setCurrentCart(updatedCart);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const removeItem = async (productId) => {
+    if (!currentCart) return;
+    
+    setLoading(true);
+    setError(null);
+
+    try {
+      const updatedCart = await removeCartItem(productId);
+      setCurrentCart(updatedCart);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const clearCart = async () => {
+    if (!currentCart || !currentCart.cart_items || currentCart.cart_items.length === 0) {
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      for (const item of currentCart.cart_items) {
+        await removeCartItem(item.product_id);
+      }
+      setCurrentCart(null);
+    } catch (err) {
+      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -103,36 +110,32 @@ export const useCart = () => {
 
   const calculateCartTotal = (cart) => {
     if (!cart || !cart.cart_items) return 0;
-    return cart.cart_items.reduce((total, item) => {
-      return total + (item.price * item.quantity);
-    }, 0);
+    return cart.cart_items.reduce((total, item) => total + (item.price * item.quantity), 0);
   };
 
   const getTotalItems = (cart) => {
     if (!cart || !cart.cart_items) return 0;
-    return cart.cart_items.reduce((total, item) => {
-      return total + item.quantity;
-    }, 0);
+    return cart.cart_items.reduce((total, item) => total + item.quantity, 0);
   };
 
   useEffect(() => {
-    fetchCarts();
-  }, []);
+    if (user) {
+      fetchMyCart();
+    } else {
+      setCurrentCart(null);
+    }
+  }, [user]);
 
   return {
-    carts,
     currentCart,
     loading,
     error,
-    fetchCarts,
-    fetchCart,
-    createCart,
-    updateCart,
-    deleteCart,
-    addItem, // ✅ Add to exposed hook
+    fetchMyCart,
+    addItem,
+    updateItemQuantity,
+    removeItem,
+    clearCart,
     calculateCartTotal,
-    getTotalItems,
-    setCurrentCart,
-    setError
+    getTotalItems
   };
-};
+}; 

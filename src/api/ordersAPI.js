@@ -1,84 +1,97 @@
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = 'http://127.0.0.1:5555/api/orders';
 
+const getAuthHeaders = () => {
+  const token = localStorage.getItem('token');
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`
+  };
+  return headers;
+};
 
-export const ordersAPI = {
-  
-  getOrders: async () => {
-    try {
-      const response = await fetch(`${API_BASE}/orders`);
-      if (!response.ok) throw new Error('Failed to fetch orders');
-      return await response.json();
-    } catch (error) {
-      console.error('Error fetching orders:', error);
-      throw error;
+export const getOrders = async () => {
+  try {
+    const response = await fetch(`${API_BASE}/my-orders`, {
+      method: 'GET',
+      headers: getAuthHeaders()
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch orders: ${response.status}`);
     }
-  },
 
-  getOrderById: async (orderId) => {
-    try {
-      const response = await fetch(`${API_BASE}/orders/single`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ id: orderId })
-      });
-      if (!response.ok) throw new Error('Failed to fetch order');
-      return await response.json();
-    } catch (error) {
-      console.error('Error fetching order:', error);
-      throw error;
-    }
-  },
-
-  createOrder: async (orderData) => {
-    try {
-      const response = await fetch(`${API_BASE}/orders`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(orderData)
-      });
-      if (!response.ok) throw new Error('Failed to create order');
-      return await response.json();
-    } catch (error) {
-      console.error('Error creating order:', error);
-      throw error;
-    }
-  },
-
-  updateOrder: async (orderData) => {
-    try {
-      const response = await fetch(`${API_BASE}/orders/update`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(orderData)
-      });
-      if (!response.ok) throw new Error('Failed to update order');
-      return await response.json();
-    } catch (error) {
-      console.error('Error updating order:', error);
-      throw error;
-    }
-  },
-
-  deleteOrder: async (orderId) => {
-    try {
-      const response = await fetch(`${API_BASE}/orders/delete`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ id: orderId })
-      });
-      if (!response.ok) throw new Error('Failed to delete order');
-      return await response.json();
-    } catch (error) {
-      console.error('Error deleting order:', error);
-      throw error;
-    }
+    return await response.json();
+  } catch (error) {
+    throw error;
   }
 };
+
+export const getOrder = async (orderId) => {
+  try {
+    const response = await fetch(`${API_BASE}/${orderId}`, {
+      method: 'GET',
+      headers: getAuthHeaders()
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch order: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const createOrder = async (orderData) => {
+  try {
+    const response = await fetch(`${API_BASE}/create`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(orderData)
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to create order: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateOrder = async (orderId, updateData) => {
+  try {
+    const response = await fetch(`${API_BASE}/${orderId}`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(updateData)
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to update order: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const deleteOrder = async (orderId) => {
+  try {
+    const response = await fetch(`${API_BASE}/${orderId}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders()
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to delete order: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    throw error;
+  }
+}; 
