@@ -1,78 +1,74 @@
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = 'http://127.0.0.1:5555/api/cart';
 
+const getToken = () => {
+  return localStorage.getItem('access_token'); // Make sure you store your JWT here after login
+};
+
+const authHeader = () => ({
+  'Content-Type': 'application/json',
+  Authorization: `Bearer ${getToken()}`,
+});
 
 export const cartAPI = {
-  
-  getCarts: async () => {
-    try {
-      const response = await fetch(`${API_BASE}/carts`);
-      if (!response.ok) throw new Error('Failed to fetch carts');
-      return await response.json();
-    } catch (error) {
-      console.error('Error fetching carts:', error);
-      throw error;
-    }
+  // Get current user's cart
+  getMyCart: async () => {
+    const response = await fetch(`${API_BASE}/`, {
+      method: 'GET',
+      headers: authHeader(),
+    });
+    if (!response.ok) throw new Error('Failed to fetch cart');
+    return await response.json();
   },
 
-  getCart: async (id) => {
-    try {
-      const response = await fetch(`${API_BASE}/carts/${id}`);
-      if (!response.ok) throw new Error('Failed to fetch cart');
-      return await response.json();
-    } catch (error) {
-      console.error('Error fetching cart:', error);
-      throw error;
-    }
+  // Create a new empty cart for current user
+  createCart: async () => {
+    const response = await fetch(`${API_BASE}/`, {
+      method: 'POST',
+      headers: authHeader(),
+    });
+    if (!response.ok) throw new Error('Failed to create cart');
+    return await response.json();
   },
 
-  createCart: async (cartData) => {
-    try {
-      const response = await fetch(`${API_BASE}/carts`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(cartData)
-      });
-      if (!response.ok) throw new Error('Failed to create cart');
-      return await response.json();
-    } catch (error) {
-      console.error('Error creating cart:', error);
-      throw error;
-    }
+  // Add item to cart
+  addItemToCart: async (itemData) => {
+    const response = await fetch(`${API_BASE}/add-item`, {
+      method: 'POST',
+      headers: authHeader(),
+      body: JSON.stringify(itemData),
+    });
+    if (!response.ok) throw new Error('Failed to add item');
+    return await response.json();
   },
 
-  updateCart: async (id, cartData) => {
-    try {
-      const response = await fetch(`${API_BASE}/carts/${id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(cartData)
-      });
-      if (!response.ok) throw new Error('Failed to update cart');
-      return await response.json();
-    } catch (error) {
-      console.error('Error updating cart:', error);
-      throw error;
-    }
+  // Update quantity of an item
+  updateItemQuantity: async (product_id, quantity) => {
+    const response = await fetch(`${API_BASE}/update-item`, {
+      method: 'PATCH',
+      headers: authHeader(),
+      body: JSON.stringify({ product_id, quantity }),
+    });
+    if (!response.ok) throw new Error('Failed to update item');
+    return await response.json();
   },
 
-deleteCart: async (id) => {
-  try {
-    const response = await fetch(`${API_BASE}/carts/${id}`, {
+  // Remove item from cart
+  removeItemFromCart: async (product_id) => {
+    const response = await fetch(`${API_BASE}/remove-item?product_id=${product_id}`, {
       method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json'
-      }
+      headers: authHeader(),
+    });
+    if (!response.ok) throw new Error('Failed to remove item');
+    return await response.json();
+  },
+
+  // Delete the whole cart
+  deleteCart: async () => {
+    const response = await fetch(`${API_BASE}/`, {
+      method: 'DELETE',
+      headers: authHeader(),
     });
     if (!response.ok) throw new Error('Failed to delete cart');
     return await response.json();
-  } catch (error) {
-    console.error('Error deleting cart:', error);
-    throw error;
-  }
-}
-
+  },
 };

@@ -86,6 +86,21 @@ export const useCart = () => {
     }
   };
 
+  const addItem = async (itemData) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const updatedCart = await cartAPI.addItemToCart(itemData);
+      setCurrentCart(updatedCart);
+      return updatedCart;
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const calculateCartTotal = (cart) => {
     if (!cart || !cart.cart_items) return 0;
     return cart.cart_items.reduce((total, item) => {
@@ -114,6 +129,7 @@ export const useCart = () => {
     createCart,
     updateCart,
     deleteCart,
+    addItem, // ✅ Add to exposed hook
     calculateCartTotal,
     getTotalItems,
     setCurrentCart,

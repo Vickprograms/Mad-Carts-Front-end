@@ -3,6 +3,7 @@ import { fetchProducts } from "../services/products";
 import ProductCard from "../components/ProductCard";
 import "./Products.css";
 import HomeProducts from './../components/HomeProducts.jsx'
+import Searchbar from '../components/Searchbar.jsx'
 
 export default function Products() {
   const [products, setProducts] = useState([]);
@@ -29,6 +30,7 @@ export default function Products() {
 
   return (
     <div className="products-page">
+      <Searchbar/>
       <h1>Our Products</h1>
        <HomeProducts/>
       <div className="products-grid">

@@ -1,8 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import './Stylesheet.css';
+import { logSearchHistory, logRecentView } from '../api/productManagerApi';
+
+import { useAuth } from '../context/AuthContext';
 
 const Searchbar = ({ isAdmin, onSelectProduct }) => {
+  const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [results, setResults] = useState([]);
@@ -10,7 +14,9 @@ const Searchbar = ({ isAdmin, onSelectProduct }) => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const containerRef = useRef(null);
+  const debounceRef = useRef(null);
 
+  // Hide suggestions when clicked outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (containerRef.current && !containerRef.current.contains(e.target)) {
@@ -21,9 +27,10 @@ const Searchbar = ({ isAdmin, onSelectProduct }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Fetch suggestions
   const fetchSuggestions = async (query) => {
     try {
-      const res = await axios.get(`http://127.0.0.1:5555/autocomplete?q=${query}`);
+      const res = await axios.get(`http://127.0.0.1:5555/api/products/autocomplete?q=${query}`);
       setSuggestions(res.data);
       setShowSuggestions(true);
     } catch (err) {
@@ -31,11 +38,13 @@ const Searchbar = ({ isAdmin, onSelectProduct }) => {
     }
   };
 
+  // Fetch search results and log search history
   const fetchResults = async (query) => {
     setLoading(true);
     try {
-      const res = await axios.get(`http://127.0.0.1:5555/autocomplete?term=${query}`);
+      const res = await axios.get(`http://127.0.0.1:5555/api/products/autocomplete?q=${query}`);
       setResults(res.data);
+      if (user) await logSearchHistory(query, localStorage.getItem('token'));
     } catch (err) {
       console.error('Search error:', err);
     } finally {
@@ -43,14 +52,18 @@ const Searchbar = ({ isAdmin, onSelectProduct }) => {
     }
   };
 
+  // Handle input change with debounce
   const handleInputChange = (e) => {
     const val = e.target.value;
     setSearchTerm(val);
-    if (val.trim()) fetchSuggestions(val.trim());
-    else {
-      setSuggestions([]);
-      setShowSuggestions(false);
-    }
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      if (val.trim()) fetchSuggestions(val.trim());
+      else {
+        setSuggestions([]);
+        setShowSuggestions(false);
+      }
+    }, 300);
   };
 
   const handleSuggestionClick = (item) => {
@@ -71,10 +84,11 @@ const Searchbar = ({ isAdmin, onSelectProduct }) => {
 
   const handleSelect = async (item) => {
     try {
-      const res = await axios.get(`http://127.0.0.1:5555/products/${item.id}`);
+      const res = await axios.get(`http://127.0.0.1:5555/api/products/${item.id}`);
       const product = res.data;
       setSelectedProduct(product);
       onSelectProduct?.(product);
+      if (user) await logRecentView(item.id, localStorage.getItem('token'));
     } catch (err) {
       alert('Could not fetch product details.');
       console.error(err);
@@ -157,24 +171,23 @@ const Searchbar = ({ isAdmin, onSelectProduct }) => {
       {selectedProduct && (
         <div className='product-detail'>
           <button onClick={() => setSelectedProduct(null)} style={{ marginBottom: '20px' }}>
-            Back to results
+            Back 
           </button>
           <div className='product-box'>
-            <img src={selectedProduct[6]} alt={selectedProduct[1]} style={{ maxWidth: '200px' }} />
-            <p>{selectedProduct[7]}</p>
-            <p><strong>Name:</strong> {selectedProduct[1]}</p>
-            <p><strong>Category:</strong> {selectedProduct[2]}</p>
-            <p><strong>Price:</strong> {selectedProduct[3]}</p>
-            <p><strong>Size:</strong> {selectedProduct[5]}</p>
-            <p><strong>Quantity:</strong> {selectedProduct[4]}</p>
-            <p><strong>Brand:</strong> {selectedProduct[8]}</p>
-            
+            <img src={selectedProduct.media} alt={selectedProduct.name} style={{ maxWidth: '200px' }} />
+            <p>{selectedProduct.description}</p>
+            <p><strong>Name:</strong> {selectedProduct.name}</p>
+            <p><strong>Category:</strong> {selectedProduct.category}</p>
+            <p><strong>Price:</strong> {selectedProduct.price}</p>
+            <p><strong>Size:</strong> {selectedProduct.size}</p>
+            <p><strong>Quantity:</strong> {selectedProduct.quantity}</p>
+            <p><strong>Brand:</strong> {selectedProduct.brand}</p>
           </div>
           {isAdmin && (
             <button
               onClick={async () => {
                 try {
-                  await axios.delete(`http://127.0.0.1:5555/products/${selectedProduct.id}`);
+                  await axios.delete(`http://127.0.0.1:5555/api/products/${selectedProduct.id}`);
                   alert('Product deleted.');
                   setSelectedProduct(null);
                   setResults(prev => prev.filter(p => p.id !== selectedProduct.id));
@@ -194,4 +207,3 @@ const Searchbar = ({ isAdmin, onSelectProduct }) => {
 };
 
 export default Searchbar;
-

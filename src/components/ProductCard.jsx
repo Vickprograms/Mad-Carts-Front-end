@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import './ProductCard.css';
+import { AddToCartButton } from './AddToCartButton.jsx';
 
 export default function ProductCard({ product }) {
   return (
@@ -9,15 +10,16 @@ export default function ProductCard({ product }) {
         <h3>{product.description}</h3>
         <p>${product.price}</p>
         {product.rating ? (
-  <div className="rating">
-    Rating: {product.rating.rate} ({product.rating.count} reviews)
-  </div>
-) : (
-  <div className="rating">No rating available</div>
-)}
-
+          <div className="rating">
+            Rating: {product.rating.rate} ({product.rating.count} reviews)
+          </div>
+        ) : (
+          <div className="rating">No rating available</div>
+        )}
       </Link>
-      <button className="add-to-cart">Add to Cart</button>
+
+      {/* ✅ Use your AddToCartButton */}
+      <AddToCartButton product={product} />
     </div>
   );
 }

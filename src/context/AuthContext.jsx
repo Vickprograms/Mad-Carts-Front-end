@@ -11,7 +11,8 @@ export const AuthProvider = ({ children }) => {
     if (token) {
       try {
         const decoded = jwtDecode(token);
-        setUser({ id: decoded.sub, role: decoded.role });
+        const { id, username, email, role } = decoded.sub;
+        setUser({ id, username, email, role });
       } catch (error) {
         console.error("Invalid token:", error);
         localStorage.removeItem('token');
@@ -22,7 +23,8 @@ export const AuthProvider = ({ children }) => {
   const login = (token) => {
     try {
       const decoded = jwtDecode(token);
-      setUser({ id: decoded.sub, role: decoded.role });
+      const { id, username, email, role } = decoded.sub;
+      setUser({ id, username, email, role });
       localStorage.setItem('token', token);
     } catch (error) {
       console.error("Login failed: invalid token", error);

@@ -5,16 +5,20 @@ import ProductDetail from "./pages/ProductDetail";
 import DesignPreview from "./pages/DesignPreview";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import ProductManager from "./components/ProductManager";
+import CartPage from './pages/CartPage'
 
 export default function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/products" element={<Products />} />
+      <Route path = '/cart' element ={<CartPage/>}/>
       <Route path="/products/:id" element={<ProductDetail />} />
       <Route path="/design-preview" element={<DesignPreview />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path ="/product-manager" element = {<ProductManager/>}/>
     </Routes>
   );
 }

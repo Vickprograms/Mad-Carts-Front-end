@@ -1,13 +1,18 @@
 import React, { useState } from 'react';
-import useCartLogic from '../hooks/useCart';
+import {useCart} from '../hooks/useCart';
 
-const AddToCartButton = ({ product }) => {
-  const { addItem } = useCartLogic();
+ export const AddToCartButton = ({ product }) => {
+  const { addItem } = useCart();
   const [loading, setLoading] = useState(false);
 
   const handleAddToCart = async () => {
     setLoading(true);
     try {
+      console.log("🛒 Sending to /add-item:", {
+  product_id: product.id,
+  price: product.price,
+  quantity: 1,
+});
       await addItem({
         product_id: product.id,
         price: product.price,
@@ -34,4 +39,4 @@ const AddToCartButton = ({ product }) => {
   );
 };
 
-export default AddToCartButton;
+

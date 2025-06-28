@@ -40,18 +40,38 @@ export const fetchAutocompleteSuggestions = async (query) => {
 };
 
 export const fetchUserSearchHistory = async (token) => {
-  const res = await axios.get(`${BASE_URL}/search-history`, {
+  const res = await axios.get(`${BASE_URL}/search/search-history`, {
     headers: { Authorization: `Bearer ${token}` }
   });
   return res.data;
 };
 
 export const logSearchHistory = async (search_term, token) => {
-  const res = await axios.post(`${BASE_URL}/search-history`, { search_term }, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  return res.data;
+  try {
+    const payload = { search_term: String(search_term) };
+
+    console.log("📦 Posting:", JSON.stringify(payload));
+    console.log("🪪 Token:", token);
+
+    const res = await axios.post(
+      'http://127.0.0.1:5555/api/search/create',
+      payload, // ✅ Send object, not string
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // ✅ Don't rename or reassign
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+
+    console.log("✅ Search logged:", res.data);
+    return res.data;
+  } catch (err) {
+    console.error("logSearchHistory failed:", err.response?.data || err.message);
+    throw err;
+  }
 };
+
 
 export const fetchCategories = async () => {
   const res = await axios.get(`${BASE_URL}/products/categories`);
