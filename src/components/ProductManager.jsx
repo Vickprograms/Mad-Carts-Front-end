@@ -8,17 +8,51 @@ const ProductManager = () => {
   const [mode, setMode] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
+  const styles = {
+    container: {
+      backgroundColor: '#0B0C10',
+      color: '#F5F5F5',
+      minHeight: '100vh',
+      padding: '2rem',
+      fontFamily: 'Segoe UI, sans-serif',
+    },
+    title: {
+      fontSize: '1.5rem',
+      fontWeight: 'bold',
+      color: '#FFD700',
+      marginBottom: '1rem',
+    },
+    buttonGroup: {
+      display: 'flex',
+      gap: '1rem',
+      flexWrap: 'wrap',
+    },
+    button: {
+      padding: '10px 16px',
+      backgroundColor: '#FFAA00',
+      border: 'none',
+      borderRadius: '4px',
+      color: '#0B0C10',
+      cursor: 'pointer',
+      fontWeight: 'bold',
+      transition: 'background 0.2s',
+    },
+    section: {
+      marginTop: '2rem',
+    },
+  };
+
   return (
-    <div className="p-6 space-y-4">
-      <h2 className="text-xl font-bold">Product Manager</h2>
-      <div className="flex gap-4">
-        <button onClick={() => setMode("create")} className="btn">Create</button>
-        <button onClick={() => setMode("update")} className="btn">Update</button>
-        <button onClick={() => setMode("partial")} className="btn">Partial Update</button>
-        <button onClick={() => setMode("delete")} className="btn">Delete</button>
+    <div style={styles.container}>
+      <h2 style={styles.title}>🛠️ Product Manager</h2>
+      <div style={styles.buttonGroup}>
+        <button onClick={() => setMode("create")} style={styles.button}>Create</button>
+        <button onClick={() => setMode("update")} style={styles.button}>Update</button>
+        <button onClick={() => setMode("partial")} style={styles.button}>Partial Update</button>
+        <button onClick={() => setMode("delete")} style={styles.button}>Delete</button>
       </div>
 
-      <div className="pt-6">
+      <div style={styles.section}>
         {mode === "create" && <CreateProductForm />}
         {mode === "update" && (
           <UpdateProductForm 

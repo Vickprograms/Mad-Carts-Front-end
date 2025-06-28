@@ -7,34 +7,67 @@ export default function SettingsIcon() {
   const { user, logout } = useAuth();
   const [open, setOpen] = useState(false);
 
-  const toggleDropdown = () => setOpen((prev) => !prev);
+  const toggleDropdown = () => setOpen(prev => !prev);
 
   if (!user) return null;
 
+  const styles = {
+    icon: {
+      fontSize: '1.5rem',
+      color: '#FFD700',
+      cursor: 'pointer',
+    },
+    dropdown: {
+      position: 'absolute',
+      right: 0,
+      marginTop: '0.5rem',
+      width: '12rem',
+      backgroundColor: '#1C1F26',
+      border: '1px solid #2A2C34',
+      borderRadius: '4px',
+      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.25)',
+      zIndex: 50,
+    },
+    item: {
+      padding: '0.5rem 1rem',
+      color: '#F5F5F5',
+      textDecoration: 'none',
+      fontSize: '0.9rem',
+      display: 'block',
+    },
+    itemHover: {
+      backgroundColor: '#2A2C34',
+    },
+    logout: {
+      padding: '0.5rem 1rem',
+      color: '#FF4D4F',
+      backgroundColor: '#1C1F26',
+      border: 'none',
+      width: '100%',
+      textAlign: 'left',
+      fontSize: '0.9rem',
+      cursor: 'pointer',
+    },
+  };
+
   return (
-    <div className="relative">
-      <FaCog
-        onClick={toggleDropdown}
-        className="text-2xl cursor-pointer hover:text-gray-600"
-      />
+    <div style={{ position: 'relative' }}>
+      <FaCog onClick={toggleDropdown} style={styles.icon} />
       {open && (
-        <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow-md z-50">
-          <div className="flex flex-col p-2 text-sm">
+        <div style={styles.dropdown}>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
             {user.role === 'admin' ? (
               <>
-                <Link to="/product-manager" className="hover:bg-gray-100 p-2 rounded">Product Manager</Link>
-                <Link to="/admin-dashboard" className="hover:bg-gray-100 p-2 rounded">Admin Dashboard</Link>
+                <Link to="/product-manager" style={styles.item}>Product Manager</Link>
+                <Link to="/admin-dashboard" style={styles.item}>Admin Dashboard</Link>
               </>
             ) : (
               <>
-                <Link to="/profile" className="hover:bg-gray-100 p-2 rounded">My Profile</Link>
-                <Link to="/orders" className="hover:bg-gray-100 p-2 rounded">My Orders</Link>
+                <Link to="/profile" style={styles.item}>My Profile</Link>
+                <Link to="/orders" style={styles.item}>My Orders</Link>
               </>
             )}
-            <button
-              onClick={logout}
-              className="text-left p-2 mt-2 bg-red-50 text-red-600 rounded hover:bg-red-100"
-            >
+            <button onClick={logout} style={styles.logout}>
               Logout
             </button>
           </div>

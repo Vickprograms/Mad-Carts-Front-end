@@ -1,83 +1,93 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import './Stylesheet.css';
-import { logSearchHistory, logRecentView } from '../api/productManagerApi';
-
 import { useAuth } from '../context/AuthContext';
+import { logSearchHistory, logRecentView } from '../api/productManagerApi';
 
 const Searchbar = ({ isAdmin, onSelectProduct }) => {
   const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
+
   const containerRef = useRef(null);
   const debounceRef = useRef(null);
 
-  // Hide suggestions when clicked outside
+ 
   useEffect(() => {
+    const timeout = { current: null };
+
     const handleClickOutside = (e) => {
       if (containerRef.current && !containerRef.current.contains(e.target)) {
-        setShowSuggestions(false);
+        timeout.current = setTimeout(() => {
+          setShowSuggestions(false);
+          setResults([]);
+          setSelectedProduct(null);
+        }, 150);
       }
     };
+
+    const cancelCollapse = () => {
+      if (timeout.current) {
+        clearTimeout(timeout.current);
+        timeout.current = null;
+      }
+    };
+
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    containerRef.current?.addEventListener('mousedown', cancelCollapse);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      containerRef.current?.removeEventListener('mousedown', cancelCollapse);
+    };
   }, []);
 
-  // Fetch suggestions
   const fetchSuggestions = async (query) => {
     try {
       const res = await axios.get(`http://127.0.0.1:5555/api/products/autocomplete?q=${query}`);
       setSuggestions(res.data);
       setShowSuggestions(true);
-    } catch (err) {
-      console.error('Suggestion error:', err);
+    } catch {
+      setSuggestions([]);
     }
   };
 
-  // Fetch search results and log search history
   const fetchResults = async (query) => {
     setLoading(true);
     try {
       const res = await axios.get(`http://127.0.0.1:5555/api/products/autocomplete?q=${query}`);
       setResults(res.data);
       if (user) await logSearchHistory(query, localStorage.getItem('token'));
-    } catch (err) {
-      console.error('Search error:', err);
+    } catch {
+      setResults([]);
     } finally {
       setLoading(false);
     }
   };
 
-  // Handle input change with debounce
   const handleInputChange = (e) => {
-    const val = e.target.value;
-    setSearchTerm(val);
+    const value = e.target.value;
+    setSearchTerm(value);
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
-      if (val.trim()) fetchSuggestions(val.trim());
-      else {
-        setSuggestions([]);
-        setShowSuggestions(false);
-      }
+      if (value.trim()) fetchSuggestions(value.trim());
+      else setShowSuggestions(false);
     }, 300);
   };
 
   const handleSuggestionClick = (item) => {
     setSearchTerm(item.name);
     setShowSuggestions(false);
-    fetchResults(item.name);
-    setSelectedProduct(null);
+    handleSelect(item);
   };
 
-  const handleSearchClick = () => {
+  const handleSearch = () => {
     if (searchTerm.trim()) {
-      setSuggestions([]);
-      setShowSuggestions(false);
       fetchResults(searchTerm.trim());
+      setShowSuggestions(false);
       setSelectedProduct(null);
     }
   };
@@ -89,113 +99,125 @@ const Searchbar = ({ isAdmin, onSelectProduct }) => {
       setSelectedProduct(product);
       onSelectProduct?.(product);
       if (user) await logRecentView(item.id, localStorage.getItem('token'));
-    } catch (err) {
-      alert('Could not fetch product details.');
-      console.error(err);
+    } catch {
+      alert('Could not load product details.');
     }
   };
 
   return (
-    <div className='searchbar-container' ref={containerRef}>
+    <div ref={containerRef} style={{ maxWidth: '700px', margin: '2rem auto', color: '#F5F5F5' }}>
       {!selectedProduct && (
         <>
-          <div className='searchbar'>
+          <div style={{ display: 'flex', marginBottom: '1rem' }}>
             <input
-              type="text"
               value={searchTerm}
               onChange={handleInputChange}
-              onFocus={() => searchTerm.trim() && setShowSuggestions(true)}
               placeholder="Search products..."
-              style={{ flex: 1, padding: '10px', fontSize: '16px' }}
+              style={{
+                flex: 1,
+                padding: '12px',
+                fontSize: '16px',
+                background: '#1C1F26',
+                color: '#F5F5F5',
+                border: '1px solid #2A2C34',
+                borderRadius: '6px 0 0 6px',
+              }}
             />
-            <button onClick={handleSearchClick} style={{ padding: '10px' }}>🔍</button>
+            <button
+              onClick={handleSearch}
+              style={{
+                padding: '12px 20px',
+                background: '#FFAA00',
+                border: 'none',
+                borderRadius: '0 6px 6px 0',
+                color: '#0B0C10',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+              }}
+            >
+              🔍
+            </button>
           </div>
 
           {showSuggestions && suggestions.length > 0 && (
-            <ul className="autocomplete-list">
-              {suggestions.map(item => (
+            <ul style={{ background: '#1C1F26', border: '1px solid #2A2C34', borderRadius: '6px', listStyle: 'none', padding: '0' }}>
+              {suggestions.map((s) => (
                 <li
-                  key={item.id}
-                  onClick={() => handleSuggestionClick(item)}
-                  onMouseDown={e => e.preventDefault()}
-                  style={{ padding: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                  key={s.id}
+                  onClick={() => handleSuggestionClick(s)}
+                  style={{ padding: '10px', cursor: 'pointer', borderBottom: '1px solid #2A2C34' }}
                 >
-                  {item.media && (
-                    <img src={item.media} alt={item.name}
-                         style={{ width: '40px', height: '40px', objectFit: 'cover', marginRight: '10px' }} />
-                  )}
-                  {item.name}
+                  {s.name}
                 </li>
               ))}
             </ul>
           )}
 
-          <div style={{ marginTop: '20px' }}>
-            {loading && <p>Loading results...</p>}
-            {!loading && results.length > 0 && (
-              <div>
-                <h3>Results:</h3>
-                <ul style={{ listStyle: 'none', padding: 0 }}>
-                  {results.map(item => (
-                    <li key={item.id} style={{ marginBottom: '10px' }}>
-                      <button
-                        onClick={() => handleSelect(item)}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          width: '100%',
-                          border: selectedProduct?.id === item.id ? '2px solid red' : '1px solid #ccc',
-                          padding: '10px',
-                          background: 'white',
-                          cursor: 'pointer'
-                        }}
-                      >
-                        {item.media && (
-                          <img src={item.media} alt={item.name}
-                               style={{ maxWidth: '60px', marginRight: '10px' }} />
-                        )}
-                        <div>
-                          <strong>{item.name}</strong>
-                          <p>{item.description?.slice(0, 50)}...</p>
-                        </div>
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
+          {loading && <p style={{ color: '#FFAA00' }}>Loading results...</p>}
+
+          {results.length > 0 && (
+            <ul style={{ listStyle: 'none', padding: 0 }}>
+              {results.map((item) => (
+                <li key={item.id} style={{ marginBottom: '1rem' }}>
+                  <button
+                    onClick={() => handleSelect(item)}
+                    style={{
+                      width: '100%',
+                      background: '#1C1F26',
+                      color: '#F5F5F5',
+                      textAlign: 'left',
+                      padding: '1rem',
+                      border: '1px solid #2A2C34',
+                      borderRadius: '6px',
+                    }}
+                  >
+                    <strong>{item.name}</strong>
+                    <p style={{ marginTop: '4px', color: '#ccc' }}>{item.description?.slice(0, 60)}...</p>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
         </>
       )}
 
       {selectedProduct && (
-        <div className='product-detail'>
-          <button onClick={() => setSelectedProduct(null)} style={{ marginBottom: '20px' }}>
-            Back 
+        <div style={{ background: '#1C1F26', padding: '1rem', borderRadius: '6px' }}>
+          <button onClick={() => setSelectedProduct(null)} style={{ marginBottom: '1rem', color: '#FFAA00' }}>
+            ← Back
           </button>
-          <div className='product-box'>
-            <img src={selectedProduct.media} alt={selectedProduct.name} style={{ maxWidth: '200px' }} />
-            <p>{selectedProduct.description}</p>
-            <p><strong>Name:</strong> {selectedProduct.name}</p>
-            <p><strong>Category:</strong> {selectedProduct.category}</p>
-            <p><strong>Price:</strong> {selectedProduct.price}</p>
-            <p><strong>Size:</strong> {selectedProduct.size}</p>
-            <p><strong>Quantity:</strong> {selectedProduct.quantity}</p>
-            <p><strong>Brand:</strong> {selectedProduct.brand}</p>
-          </div>
+          <h3>{selectedProduct.name}</h3>
+          <img
+            src={selectedProduct.media}
+            alt={selectedProduct.name}
+            style={{ maxWidth: '300px', margin: '1rem 0' }}
+          />
+          <p><strong>Category:</strong> {selectedProduct.category}</p>
+          <p><strong>Price:</strong> KES {selectedProduct.price}</p>
+          <p><strong>Size:</strong> {selectedProduct.size}</p>
+          <p><strong>Quantity:</strong> {selectedProduct.quantity}</p>
+          <p><strong>Brand:</strong> {selectedProduct.brand}</p>
+          <p>{selectedProduct.description}</p>
+
           {isAdmin && (
             <button
               onClick={async () => {
                 try {
                   await axios.delete(`http://127.0.0.1:5555/api/products/${selectedProduct.id}`);
-                  alert('Product deleted.');
+                  alert('Product deleted');
                   setSelectedProduct(null);
-                  setResults(prev => prev.filter(p => p.id !== selectedProduct.id));
+                  setResults((prev) => prev.filter((p) => p.id !== selectedProduct.id));
                 } catch {
-                  alert('Delete failed.');
+                  alert('Failed to delete');
                 }
               }}
-              style={{ marginTop: '10px', backgroundColor: 'red', color: 'white', padding: '10px' }}
+              style={{
+                backgroundColor: 'red',
+                color: '#fff',
+                padding: '10px',
+                borderRadius: '4px',
+                marginTop: '1rem',
+              }}
             >
               Delete Product
             </button>

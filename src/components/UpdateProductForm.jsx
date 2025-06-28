@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import Searchbar from "./Searchbar"; 
+import Searchbar from "./Searchbar";
 
 const UpdateProductForm = ({ selectedProduct, setSelectedProduct }) => {
   const [formState, setFormState] = useState({});
@@ -8,10 +8,7 @@ const UpdateProductForm = ({ selectedProduct, setSelectedProduct }) => {
   const [successMessage, setSuccessMessage] = useState("");
 
   const handleInputChange = (e) => {
-    setFormState({
-      ...formState,
-      [e.target.name]: e.target.value,
-    });
+    setFormState({ ...formState, [e.target.name]: e.target.value });
   };
 
   const handleImageChange = (e) => {
@@ -20,7 +17,6 @@ const UpdateProductForm = ({ selectedProduct, setSelectedProduct }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!selectedProduct) return;
 
     const formData = new FormData();
@@ -32,117 +28,146 @@ const UpdateProductForm = ({ selectedProduct, setSelectedProduct }) => {
     formData.append("description", formState.description || selectedProduct.description);
     formData.append("brand", formState.brand || selectedProduct.brand);
 
-    if (imageFile) {
-      formData.append("image", imageFile);
-    }
+    if (imageFile) formData.append("image", imageFile);
 
     try {
       const response = await axios.put(
         `http://127.0.0.1:5555/products/${selectedProduct.id}`,
         formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
+        { headers: { "Content-Type": "multipart/form-data" } }
       );
-      setSuccessMessage("Product updated successfully!");
-      setSelectedProduct(response.data); 
+      setSuccessMessage("✅ Product updated successfully!");
+      setSelectedProduct(response.data);
     } catch (error) {
       console.error("Update failed:", error);
     }
   };
 
+  const styles = {
+    container: {
+      backgroundColor: "#0B0C10",
+      color: "#F5F5F5",
+      padding: "2rem",
+      borderRadius: "8px",
+      maxWidth: "600px",
+      margin: "2rem auto",
+      border: "1px solid #2A2C34",
+    },
+    form: {
+      display: "flex",
+      flexDirection: "column",
+      gap: "1rem",
+    },
+    label: {
+      fontWeight: "bold",
+    },
+    input: {
+      padding: "10px",
+      background: "#1C1F26",
+      border: "1px solid #2A2C34",
+      borderRadius: "4px",
+      color: "#F5F5F5",
+    },
+    button: {
+      background: "#FFAA00",
+      color: "#0B0C10",
+      padding: "10px",
+      border: "none",
+      borderRadius: "4px",
+      cursor: "pointer",
+      fontWeight: "bold",
+    },
+    success: {
+      color: "#FFD700",
+      marginTop: "1rem",
+    },
+  };
+
   return (
-    <div>
-      <h2>Update Product</h2>
-      <div className="update-input-container">
+    <div style={styles.container}>
+      <h2 style={{ color: "#FFD700", marginBottom: "1rem" }}>Update Product</h2>
       <Searchbar isAdmin={false} onSelectProduct={setSelectedProduct} />
 
       {selectedProduct && (
-        <form onSubmit={handleSubmit} className="update-form">
-          <p><strong>ID:</strong> {selectedProduct.id}</p>
-          
-          <label htmlFor="name">name:</label>
+        <form onSubmit={handleSubmit} style={styles.form}>
+          <div><strong>ID:</strong> {selectedProduct.id}</div>
+
+          <label style={styles.label} htmlFor="name">Name</label>
           <input
+            style={styles.input}
             type="text"
-            id="name"
             name="name"
-            placeholder="Name"
             defaultValue={selectedProduct.name}
             onChange={handleInputChange}
           />
-          
-          <label htmlFor="category">category:</label>
+
+          <label style={styles.label} htmlFor="category">Category</label>
           <input
+            style={styles.input}
             type="text"
-            id="category"
             name="category"
-            placeholder="Category"
             defaultValue={selectedProduct.category}
             onChange={handleInputChange}
           />
-          
-          <label htmlFor="price">price:</label>
+
+          <label style={styles.label} htmlFor="price">Price</label>
           <input
+            style={styles.input}
             type="number"
-            id="price"
             name="price"
-            placeholder="Price"
             defaultValue={selectedProduct.price}
             onChange={handleInputChange}
           />
-          
 
-          <label htmlFor="quantity">quantity:</label>
+          <label style={styles.label} htmlFor="quantity">Quantity</label>
           <input
+            style={styles.input}
             type="number"
-            id="quantity"
             name="quantity"
-            placeholder="Quantity"
             defaultValue={selectedProduct.quantity}
             onChange={handleInputChange}
           />
-          
 
-            <label htmlFor="size">size:</label>
+          <label style={styles.label} htmlFor="size">Size</label>
           <input
+            style={styles.input}
             type="text"
-            id="size"
             name="size"
-            placeholder="Size"
             defaultValue={selectedProduct.size}
             onChange={handleInputChange}
           />
-          
-          <label htmlFor="brand">brand:</label>
+
+          <label style={styles.label} htmlFor="brand">Brand</label>
           <input
+            style={styles.input}
             type="text"
-            id="brand"
             name="brand"
-            placeholder="Brand"
             defaultValue={selectedProduct.brand}
             onChange={handleInputChange}
           />
-          
-            <label htmlFor="description">description:</label>
+
+          <label style={styles.label} htmlFor="description">Description</label>
           <textarea
+            style={{ ...styles.input, minHeight: "80px" }}
             name="description"
-            id="description"
-            placeholder="Description"
             defaultValue={selectedProduct.description}
             onChange={handleInputChange}
           />
 
-          <label htmlFor="image">image:</label> 
-          <input type="file" name="image" accept="image/*" placeholder="📸" onChange={handleImageChange} />
+          <label style={styles.label} htmlFor="image">Image</label>
+          <input
+            style={styles.input}
+            type="file"
+            name="image"
+            accept="image/*"
+            onChange={handleImageChange}
+          />
 
-          <button type="submit" className="btn">Update</button>
+          <button type="submit" style={styles.button}>Update</button>
 
-          {successMessage && <p className="text-green-500">{successMessage}</p>}
+          {successMessage && <p style={styles.success}>{successMessage}</p>}
         </form>
       )}
-      </div>
     </div>
   );
 };

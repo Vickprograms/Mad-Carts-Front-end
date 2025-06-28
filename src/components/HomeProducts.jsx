@@ -9,24 +9,21 @@ function HomeProducts() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Fetch category names
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const res = await axios.get('http://127.0.0.1:5555/api/products/categories');
         setCategories(res.data);
       } catch (err) {
-        console.error(err);
         setError('Failed to load categories');
       }
     };
     fetchCategories();
   }, []);
 
-  // Fetch products for selected category
   useEffect(() => {
+    if (!selectedCategory) return;
     const fetchProducts = async () => {
-      if (!selectedCategory) return;
       setLoading(true);
       try {
         const res = await axios.get(`http://127.0.0.1:5555/api/products/category?q=${encodeURIComponent(selectedCategory)}`);
@@ -34,7 +31,6 @@ function HomeProducts() {
         setSelectedProduct(null);
         setError(null);
       } catch (err) {
-        console.error(err);
         setError('Failed to load products');
       } finally {
         setLoading(false);
@@ -52,76 +48,117 @@ function HomeProducts() {
     setSelectedProduct(null);
   };
 
+  const styles = {
+    page: {
+      backgroundColor: '#0B0C10',
+      color: '#F5F5F5',
+      padding: '1rem',
+      borderRadius: '8px',
+    },
+    heading: {
+      color: '#FFD700',
+      fontSize: '1.5rem',
+      marginBottom: '1rem',
+    },
+    categoryButton: {
+      backgroundColor: '#1C1F26',
+      color: '#F5F5F5',
+      border: '1px solid #2A2C34',
+      borderRadius: '8px',
+      padding: '1rem',
+      cursor: 'pointer',
+      minWidth: '140px',
+      transition: '0.2s',
+    },
+    backButton: {
+      margin: '1rem 0',
+      backgroundColor: '#2A2C34',
+      color: '#FFAA00',
+      padding: '0.5rem 1rem',
+      border: 'none',
+      borderRadius: '6px',
+      cursor: 'pointer',
+    },
+    productCard: {
+      backgroundColor: '#1C1F26',
+      color: '#F5F5F5',
+      border: '1px solid #2A2C34',
+      borderRadius: '8px',
+      overflow: 'hidden',
+      cursor: 'pointer',
+      width: '200px',
+    },
+    productImage: {
+      width: '100%',
+      height: '140px',
+      objectFit: 'cover',
+    },
+    grid: {
+      display: 'flex',
+      flexWrap: 'wrap',
+      gap: '1rem',
+      marginTop: '1rem',
+    },
+  };
+
   return (
-    <div className="home-products" style={{ padding: '1rem' }}>
-      <h1>Browse Products by Category</h1>
+    <div style={styles.page}>
+      <h1 style={styles.heading}>Browse Products by Category</h1>
 
       {error && <p style={{ color: 'red' }}>{error}</p>}
 
       {!selectedCategory && (
-        <div className="category-list" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-          {categories.map((catName) => (
+        <div style={styles.grid}>
+          {categories.map((cat) => (
             <button
-              key={catName}
-              onClick={() => handleCategoryClick(catName)}
-              style={{
-                border: '1px solid #ddd',
-                borderRadius: '8px',
-                background: 'white',
-                padding: '1rem',
-                cursor: 'pointer'
-              }}
+              key={cat}
+              onClick={() => handleCategoryClick(cat)}
+              style={styles.categoryButton}
             >
-              <h4>{catName}</h4>
+              {cat}
             </button>
           ))}
         </div>
       )}
 
       {selectedCategory && !selectedProduct && (
-        <div>
-          <button onClick={backToCategories} style={{ margin: '1rem 0' }}>← Back to Categories</button>
-          <h2>Products in {selectedCategory}</h2>
+        <>
+          <button onClick={backToCategories} style={styles.backButton}>← Back to Categories</button>
+          <h2 style={{ color: '#FFAA00' }}>Products in {selectedCategory}</h2>
           {loading ? (
-            <p>Loading products...</p>
+            <p style={{ marginTop: '1rem' }}>Loading products...</p>
           ) : (
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
+            <div style={styles.grid}>
               {products.map((p) => (
                 <div
                   key={p.id}
-                  style={{
-                    width: '200px',
-                    border: '1px solid #ddd',
-                    borderRadius: '8px',
-                    cursor: 'pointer'
-                  }}
+                  style={styles.productCard}
                   onClick={() => handleProductClick(p)}
                 >
                   <img
                     src={`http://127.0.0.1:5555/static/uploads/${p.media}`}
                     alt={p.name}
-                    style={{ width: '100%', height: '120px', objectFit: 'cover' }}
+                    style={styles.productImage}
                   />
                   <div style={{ padding: '0.5rem' }}>
                     <h4>{p.name}</h4>
-                    <p>KES {p.price}</p>
+                    <p style={{ color: '#FFD700' }}>KES {p.price}</p>
                   </div>
                 </div>
               ))}
             </div>
           )}
-        </div>
+        </>
       )}
 
       {selectedProduct && (
         <div style={{ marginTop: '1rem' }}>
-          <button onClick={backToProducts} style={{ marginBottom: '1rem' }}>← Back to {selectedCategory}</button>
-          <h2>{selectedProduct.name}</h2>
-          console.log(selectedProduct.media)
+          <button onClick={backToProducts} style={styles.backButton}>← Back to {selectedCategory}</button>
+          <h2 style={{ color: '#FFD700' }}>{selectedProduct.name}</h2>
           <img
             src={`http://127.0.0.1:5555/static/uploads/${selectedProduct.media}`}
             alt={selectedProduct.name}
-            style={{ width: '300px', objectFit: 'cover' }}
+            style={{ width: '300px', borderRadius: '8px', marginBottom: '1rem' }}
           />
           <p><strong>Price:</strong> KES {selectedProduct.price}</p>
           <p><strong>Brand:</strong> {selectedProduct.brand}</p>
