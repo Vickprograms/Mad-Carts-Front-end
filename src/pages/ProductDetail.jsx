@@ -31,10 +31,10 @@ export default function ProductDetail() {
   return (
     <div className="product-detail">
       <div className="product-images">
-        <img src={product.image} alt={product.title} />
+        <img src={product.media} alt={product.name} />
       </div>
       <div className="product-info">
-        <h1>{product.title}</h1>
+        <h1>{product.description}</h1>
         <div className="price">${product.price}</div>
         <div className="rating">
           Rating: {product.rating?.rate} ({product.rating?.count} reviews)

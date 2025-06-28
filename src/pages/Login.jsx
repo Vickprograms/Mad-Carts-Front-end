@@ -31,7 +31,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:5000/auth/login", formData);
+      const res = await axios.post("http://127.0.0.1:5555/auth/login", formData);
       const { access_token, user } = res.data;
 
       setAuthData({ token: access_token, user });

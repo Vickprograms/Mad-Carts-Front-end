@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { fetchProducts } from "../services/products";
 import ProductCard from "../components/ProductCard";
 import "./Products.css";
+import HomeProducts from './../components/HomeProducts.jsx'
 
 export default function Products() {
   const [products, setProducts] = useState([]);
@@ -29,6 +30,7 @@ export default function Products() {
   return (
     <div className="products-page">
       <h1>Our Products</h1>
+       <HomeProducts/>
       <div className="products-grid">
         {products.map(product => (
           <ProductCard key={product.id} product={product} />
