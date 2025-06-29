@@ -9,7 +9,7 @@ const AddToCartButton = ({ product }) => {
   const handleAddToCart = async () => {
     setLoading(true);
     try {
-      await addItem(product.id, 1);
+      await addItem(product.id, product.price, 1);
     } catch (error) {
       alert('Failed to add item to cart');
     } finally {

@@ -7,6 +7,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ProductManager from "./components/ProductManager";
 import CartPage from './pages/CartPage'
+import OrdersPage from './pages/OrdersPage'
 
 export default function AppRoutes() {
   return (
@@ -19,6 +20,7 @@ export default function AppRoutes() {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path ="/product-manager" element = {<ProductManager/>}/>
+      <Route path="/orders" element={<OrdersPage />} />
     </Routes>
   );
 }

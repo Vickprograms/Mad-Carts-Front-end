@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { AddToCartButton } from './AddToCartButton.jsx';
+import  AddToCartButton  from './AddToCartButton.jsx';
 
 export default function ProductCard({ product }) {
   const styles = {

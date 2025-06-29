@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ordersAPI } from '../api/ordersAPI';
+import { getOrders, getOrder, createOrder, updateOrder, deleteOrder } from '../api/ordersAPI';
 
 export const useOrders = () => {
   const [orders, setOrders] = useState([]);
@@ -7,12 +7,11 @@ export const useOrders = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-
   const fetchOrders = async () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await ordersAPI.getOrders();
+      const data = await getOrders();
       setOrders(data);
     } catch (err) {
       setError(err.message);
@@ -25,7 +24,7 @@ export const useOrders = () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await ordersAPI.getOrderById(orderId);
+      const data = await getOrder(orderId);
       setCurrentOrder(data);
       return data;
     } catch (err) {
@@ -35,11 +34,11 @@ export const useOrders = () => {
     }
   };
 
-  const createOrder = async (orderData) => {
+  const createOrderHandler = async (orderData) => {
     setLoading(true);
     setError(null);
     try {
-      const newOrder = await ordersAPI.createOrder(orderData);
+      const newOrder = await createOrder(orderData);
       setOrders(prev => [...prev, newOrder]);
       return newOrder;
     } catch (err) {
@@ -50,15 +49,15 @@ export const useOrders = () => {
     }
   };
 
-  const updateOrder = async (orderData) => {
+  const updateOrderHandler = async (orderId, updateData) => {
     setLoading(true);
     setError(null);
     try {
-      const updatedOrder = await ordersAPI.updateOrder(orderData);
+      const updatedOrder = await updateOrder(orderId, updateData);
       setOrders(prev => prev.map(order => 
-        order.id === orderData.id ? updatedOrder : order
+        order.id === orderId ? updatedOrder : order
       ));
-      if (currentOrder && currentOrder.id === orderData.id) {
+      if (currentOrder && currentOrder.id === orderId) {
         setCurrentOrder(updatedOrder);
       }
       return updatedOrder;
@@ -70,11 +69,11 @@ export const useOrders = () => {
     }
   };
 
-  const deleteOrder = async (orderId) => {
+  const deleteOrderHandler = async (orderId) => {
     setLoading(true);
     setError(null);
     try {
-      await ordersAPI.deleteOrder(orderId);
+      await deleteOrder(orderId);
       setOrders(prev => prev.filter(order => order.id !== orderId));
       if (currentOrder && currentOrder.id === orderId) {
         setCurrentOrder(null);
@@ -131,9 +130,9 @@ export const useOrders = () => {
     error,
     fetchOrders,
     fetchOrder,
-    createOrder,
-    updateOrder,
-    deleteOrder,
+    createOrder: createOrderHandler,
+    updateOrder: updateOrderHandler,
+    deleteOrder: deleteOrderHandler,
     getStatusColor,
     getStatusIcon,
     getTotalItems,

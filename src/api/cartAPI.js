@@ -10,7 +10,7 @@ const getAuthHeaders = () => {
 };
 
 export const getCart = async () => {
-  const response = await fetch(`${API_BASE}/my-cart`, {
+  const response = await fetch(`${API_BASE}/`, {
     method: 'GET',
     headers: getAuthHeaders()
   });
@@ -23,9 +23,10 @@ export const getCart = async () => {
 };
 
 export const createCart = async () => {
-  const response = await fetch(`${API_BASE}/create`, {
+  const response = await fetch(`${API_BASE}/`, {
     method: 'POST',
-    headers: getAuthHeaders()
+    headers: getAuthHeaders(),
+    body: JSON.stringify({}) // send empty object just in case
   });
 
   if (!response.ok) {
@@ -35,12 +36,13 @@ export const createCart = async () => {
   return await response.json();
 };
 
-export const addItemToCart = async (productId, quantity = 1) => {
+export const addItemToCart = async (productId, price, quantity = 1) => {
   const response = await fetch(`${API_BASE}/add-item`, {
     method: 'POST',
     headers: getAuthHeaders(),
     body: JSON.stringify({
       product_id: productId,
+      price: price,
       quantity: quantity
     })
   });
@@ -54,7 +56,7 @@ export const addItemToCart = async (productId, quantity = 1) => {
 
 export const updateCartItem = async (productId, quantity) => {
   const response = await fetch(`${API_BASE}/update-item`, {
-    method: 'PUT',
+    method: 'PATCH', // PATCH instead of PUT
     headers: getAuthHeaders(),
     body: JSON.stringify({
       product_id: productId,
@@ -70,12 +72,10 @@ export const updateCartItem = async (productId, quantity) => {
 };
 
 export const removeCartItem = async (productId) => {
-  const response = await fetch(`${API_BASE}/remove-item`, {
+  const response = await fetch(`${API_BASE}/remove-item?product_id=${encodeURIComponent(productId)}`, {
     method: 'DELETE',
-    headers: getAuthHeaders(),
-    body: JSON.stringify({
-      product_id: productId
-    })
+    headers: getAuthHeaders()
+    // No body
   });
 
   if (!response.ok) {
@@ -87,7 +87,7 @@ export const removeCartItem = async (productId) => {
 
 export const deleteCart = async () => {
   try {
-    const response = await fetch(`${API_BASE}/delete`, {
+    const response = await fetch(`${API_BASE}/`, {
       method: 'DELETE',
       headers: getAuthHeaders()
     });

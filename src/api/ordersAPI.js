@@ -11,7 +11,7 @@ const getAuthHeaders = () => {
 
 export const getOrders = async () => {
   try {
-    const response = await fetch(`${API_BASE}/my-orders`, {
+    const response = await fetch(`${API_BASE}/`, {
       method: 'GET',
       headers: getAuthHeaders()
     });
@@ -45,7 +45,7 @@ export const getOrder = async (orderId) => {
 
 export const createOrder = async (orderData) => {
   try {
-    const response = await fetch(`${API_BASE}/create`, {
+    const response = await fetch(`${API_BASE}/`, {
       method: 'POST',
       headers: getAuthHeaders(),
       body: JSON.stringify(orderData)
