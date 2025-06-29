@@ -8,6 +8,11 @@ import Register from "./pages/Register";
 import ProductManager from "./components/ProductManager";
 import CartPage from './pages/CartPage'
 import OrderDetailsPage from './pages/OrderDetailsPage'
+import DashboardDriver from './pages/DashboardDriver'
+import DashboardAdmin from './pages/DashboardAdmin'
+import Deliveries from './pages/Deliveries'
+import AdminUsers from './pages/AdminUsers'
+import AdminProducts from './pages/AdminProducts'
 
 export default function AppRoutes() {
   return (
@@ -21,6 +26,11 @@ export default function AppRoutes() {
       <Route path="/register" element={<Register />} />
       <Route path ="/product-manager" element = {<ProductManager/>}/>
       <Route path="/orders" element={<OrderDetailsPage />} />
+      <Route path="/driver" element={<DashboardDriver />} />
+      <Route path="/admin" element={<DashboardAdmin />} />
+      <Route path="/deliveries" element={<Deliveries />} />
+      <Route path="/admin/users" element={<AdminUsers />} />
+      <Route path="/admin/products" element={<AdminProducts />} />
     </Routes>
   );
 }

@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../context/AuthContext";
+import "../styles/auth.css";
 
 const Login = () => {
   const { login, user } = useContext(AuthContext);
@@ -9,7 +10,6 @@ const Login = () => {
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
-
 
   useEffect(() => {
     if (user) {
@@ -37,16 +37,13 @@ const Login = () => {
       const res = await axios.post("http://127.0.0.1:5555/api/auth/login", formData);
       const { access_token, user } = res.data;
 
-     
       const role = user?.role;
       if (!role) {
         throw new Error("Role missing in user data.");
       }
 
-      
       login(access_token);
 
-      
       if (role === "customer") {
         navigate("/");
       } else if (role === "driver") {
@@ -63,59 +60,73 @@ const Login = () => {
     }
   };
 
- 
   if (user) {
     return null;
   }
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-50">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-6 rounded-xl shadow-md w-full max-w-md"
-      >
-        <h2 className="text-2xl font-semibold mb-4 text-center">Login</h2>
+    <div className="auth-container">
+      <div className="auth-card">
+        <div className="auth-header">
+          <h1 className="auth-title">Welcome Back</h1>
+          <p className="auth-subtitle">Sign in to your account</p>
+        </div>
+        
+        <form onSubmit={handleSubmit} className="auth-form">
+          <div className="auth-form-group">
+            <label htmlFor="email" className="auth-label">
+              Email Address
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="Enter your email"
+              value={formData.email}
+              onChange={handleChange}
+              className="auth-input"
+              required
+            />
+          </div>
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          className="block w-full p-2 mb-4 border rounded"
-          required
-        />
+          <div className="auth-form-group">
+            <label htmlFor="password" className="auth-label">
+              Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Enter your password"
+              value={formData.password}
+              onChange={handleChange}
+              className="auth-input"
+              required
+            />
+          </div>
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-          className="block w-full p-2 mb-4 border rounded"
-          required
-        />
-
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className={`py-2 px-4 rounded w-full text-white ${
-            isSubmitting ? "bg-gray-500 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"
-          }`}
-        >
-          {isSubmitting ? "Submitting..." : "Login"}
-        </button>
-
-        {message && (
-          <p
-            className={`mt-4 text-sm text-center ${
-              message.toLowerCase().includes("success") ? "text-green-600" : "text-red-600"
-            }`}
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="auth-button"
           >
-            {message}
-          </p>
-        )}
-      </form>
+            {isSubmitting ? (
+              <div className="auth-loading">
+                <div className="auth-spinner"></div>
+                Signing in...
+              </div>
+            ) : (
+              "Sign In"
+            )}
+          </button>
+
+          {message && (
+            <div className={`auth-message ${message.toLowerCase().includes("success") ? "success" : "error"}`}>
+              {message}
+            </div>
+          )}
+        </form>
+      </div>
     </div>
   );
 };

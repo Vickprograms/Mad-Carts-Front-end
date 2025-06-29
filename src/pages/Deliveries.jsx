@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import DeliveryCard from '../components/DeliveryCard';
 import DeliveryForm from '../components/DeliveryForm';
+import "../styles/deliveries.css";
 
 export default function Deliveries() {
   const [deliveries, setDeliveries] = useState([]);
@@ -19,11 +20,21 @@ export default function Deliveries() {
   }, []);
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Driver Dashboard - Deliveries</h1>
-      <DeliveryForm onCreated={fetchDeliveries} />
-      <div className="grid gap-4 mt-4">
-        {deliveries.map(delivery => <DeliveryCard key={delivery.id} delivery={delivery} />)}
+    <div className="deliveries-container">
+      <div className="deliveries-card">
+        <h1 className="deliveries-title">Your Deliveries</h1>
+        <DeliveryForm onCreated={fetchDeliveries} />
+        <div className="deliveries-list">
+          {deliveries.length === 0 ? (
+            <div className="deliveries-empty">No deliveries found.</div>
+          ) : (
+            deliveries.map(delivery => (
+              <div className="delivery-item" key={delivery.id}>
+                <DeliveryCard delivery={delivery} />
+              </div>
+            ))
+          )}
+        </div>
       </div>
     </div>
   );

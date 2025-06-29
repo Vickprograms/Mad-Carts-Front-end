@@ -1,10 +1,11 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../context/AuthContext";
+import "../styles/auth.css";
 
 const Register = () => {
-  const { login } = useContext(AuthContext);
+  const { login, user } = useContext(AuthContext);
   const [formData, setFormData] = useState({
     email: "",
     username: "",
@@ -15,112 +16,180 @@ const Register = () => {
 
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isRedirecting, setIsRedirecting] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) {
+      if (user.role === "customer") {
+        navigate("/");
+      } else if (user.role === "driver") {
+        navigate("/driver");
+      } else if (user.role === "admin") {
+        navigate("/admin");
+      }
+    }
+  }, [user, navigate]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setMessage("");
   };
 
-  const handleRedirect = (role) => {
-    e.preventDefault()
-    setIsRedirecting(true);
-    setMessage("Registration successful! Redirecting...");
-
-    setTimeout(() => {
-      if (role === "customer") {
-        window.location.href = "http://localhost:3000/";
-      } else if (role === "driver") {
-        navigate("/driver");
-      } else if (role === "admin") {
-        navigate("/admin");
-      } else {
-        setMessage("Unknown role. Contact support.");
-      }
-    }, 1500);
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setMessage("");
+    
     try {
-      // Register user
       await axios.post("http://127.0.0.1:5555/api/auth/register", formData);
 
-      // Login user
       const loginRes = await axios.post("http://127.0.0.1:5555/api/auth/login", {
         email: formData.email,
         password: formData.password,
       });
 
-      const { access_token } = loginRes.data;
-      login(access_token); // save in AuthContext
+      const { access_token, user } = loginRes.data;
+      const role = user?.role;
+      
+      if (!role) {
+        throw new Error("Role missing in user data.");
+      }
 
-      const decoded = JSON.parse(atob(access_token.split(".")[1]));
-      const role = decoded?.sub?.role;
-      handleRedirect(role);
+      login(access_token);
+
+      if (role === "customer") {
+        navigate("/");
+      } else if (role === "driver") {
+        navigate("/driver");
+      } else if (role === "admin") {
+        navigate("/admin");
+      } else {
+        setMessage("Unknown role. Please contact support.");
+        setIsSubmitting(false);
+      }
     } catch (err) {
       setMessage(err.response?.data?.error || "Registration failed.");
-      setIsSubmitting(false); // Allow retry
+      setIsSubmitting(false);
     }
   };
 
+  if (user) {
+    return null;
+  }
+
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-6 rounded-xl shadow-md w-full max-w-md"
-      >
-        <h2 className="text-2xl font-semibold mb-4 text-center">Register</h2>
+    <div className="auth-container">
+      <div className="auth-card">
+        <div className="auth-header">
+          <h1 className="auth-title">Create Account</h1>
+          <p className="auth-subtitle">Join us today</p>
+        </div>
+        
+        <form onSubmit={handleSubmit} className="auth-form">
+          <div className="auth-form-group">
+            <label htmlFor="email" className="auth-label">
+              Email Address
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="Enter your email"
+              value={formData.email}
+              onChange={handleChange}
+              className="auth-input"
+              required
+            />
+          </div>
 
-        {["email", "username", "password", "phone_no"].map((field) => (
-          <input
-            key={field}
-            type={field === "password" ? "password" : "text"}
-            name={field}
-            placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
-            value={formData[field]}
-            onChange={handleChange}
-            className="block w-full p-2 mb-4 border rounded"
-            required
-          />
-        ))}
+          <div className="auth-form-group">
+            <label htmlFor="username" className="auth-label">
+              Username
+            </label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              placeholder="Choose a username"
+              value={formData.username}
+              onChange={handleChange}
+              className="auth-input"
+              required
+            />
+          </div>
 
-        <select
-          name="role"
-          value={formData.role}
-          onChange={handleChange}
-          className="block w-full p-2 mb-4 border rounded"
-          required
-        >
-          <option value="customer">Customer</option>
-          <option value="driver">Driver</option>
-          <option value="admin">Admin</option>
-        </select>
+          <div className="auth-form-group">
+            <label htmlFor="password" className="auth-label">
+              Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Create a password"
+              value={formData.password}
+              onChange={handleChange}
+              className="auth-input"
+              required
+            />
+          </div>
 
-        <button
-          type="submit"
-          disabled={isSubmitting || isRedirecting}
-          className={`py-2 px-4 rounded w-full text-white ${
-            isRedirecting
-              ? "bg-gray-500 cursor-not-allowed"
-              : "bg-blue-600 hover:bg-blue-700"
-          }`}
-        >
-          {isRedirecting ? "Redirecting..." : isSubmitting ? "Submitting..." : "Register"}
-        </button>
+          <div className="auth-form-group">
+            <label htmlFor="phone_no" className="auth-label">
+              Phone Number
+            </label>
+            <input
+              type="tel"
+              id="phone_no"
+              name="phone_no"
+              placeholder="Enter your phone number"
+              value={formData.phone_no}
+              onChange={handleChange}
+              className="auth-input"
+              required
+            />
+          </div>
 
-        {message && (
-          <p
-            className={`mt-4 text-sm text-center ${
-              message.toLowerCase().includes("success") ? "text-green-600" : "text-red-600"
-            }`}
+          <div className="auth-form-group">
+            <label htmlFor="role" className="auth-label">
+              Account Type
+            </label>
+            <select
+              id="role"
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+              className="auth-select"
+              required
+            >
+              <option value="customer">Customer</option>
+              <option value="driver">Driver</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="auth-button"
           >
-            {message}
-          </p>
-        )}
-      </form>
+            {isSubmitting ? (
+              <div className="auth-loading">
+                <div className="auth-spinner"></div>
+                Creating account...
+              </div>
+            ) : (
+              "Create Account"
+            )}
+          </button>
+
+          {message && (
+            <div className={`auth-message ${message.toLowerCase().includes("success") ? "success" : "error"}`}>
+              {message}
+            </div>
+          )}
+        </form>
+      </div>
     </div>
   );
 };
