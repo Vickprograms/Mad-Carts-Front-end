@@ -10,6 +10,7 @@ export const useCart = () => {
 
   const fetchMyCart = async () => {
     if (!user) {
+      setCurrentCart(null);
       return;
     }
 
@@ -40,15 +41,21 @@ export const useCart = () => {
     }
   };
 
-  const addItem = async (productId, quantity = 1) => {
-    if (!currentCart) return;
-    
+  const addItem = async (productId, price, quantity = 1) => {
     setLoading(true);
     setError(null);
 
     try {
-      const updatedCart = await addItemToCart(productId, quantity);
-      setCurrentCart(updatedCart);
+
+      if (!currentCart) {
+        console.log(' No cart exists, creating one...');
+        await createCart();
+        await fetchMyCart();
+      }
+      
+      await addItemToCart(productId, price, quantity);
+
+      await fetchMyCart();
     } catch (err) {
       setError(err.message);
     } finally {
@@ -118,13 +125,18 @@ export const useCart = () => {
     return cart.cart_items.reduce((total, item) => total + item.quantity, 0);
   };
 
+
+  useEffect(() => {
+    setCurrentCart(null);
+    setError(null);
+  }, [user?.id]);
+
+
   useEffect(() => {
     if (user) {
       fetchMyCart();
-    } else {
-      setCurrentCart(null);
     }
-  }, [user]);
+  }, [user?.id]);
 
   return {
     currentCart,
