@@ -1,0 +1,35 @@
+.deliveries-container {
+  min-height: 100vh;
+  background-color: #0B0C10;
+  color: #F5F5F5;
+  padding: 1.5rem;
+}
+
+.dashboard-title {
+  font-size: 1.875rem;
+  font-weight: bold;
+  color: #FFD700;
+  margin-bottom: 1.5rem;
+}
+
+.form-container {
+  background-color: #1C1F26;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid #2A2C34;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+}
+
+.deliveries-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.delivery-card-wrapper {
+  background-color: #1C1F26;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid #2A2C34;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}

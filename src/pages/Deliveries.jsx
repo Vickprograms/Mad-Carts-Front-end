@@ -1,17 +1,23 @@
+// src/pages/Deliveries.jsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import DeliveryCard from '../components/DeliveryCard';
 import DeliveryForm from '../components/DeliveryForm';
+import './Deliveries.css';
 
 export default function Deliveries() {
   const [deliveries, setDeliveries] = useState([]);
 
   async function fetchDeliveries() {
     const token = localStorage.getItem('token');
-    const res = await axios.get('http://localhost:5000/deliveries', {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    setDeliveries(res.data);
+    try {
+      const res = await axios.get('http://localhost:5000/deliveries', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setDeliveries(res.data);
+    } catch (err) {
+      console.error("Failed to fetch deliveries:", err);
+    }
   }
 
   useEffect(() => {
@@ -19,11 +25,19 @@ export default function Deliveries() {
   }, []);
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Driver Dashboard - Deliveries</h1>
-      <DeliveryForm onCreated={fetchDeliveries} />
-      <div className="grid gap-4 mt-4">
-        {deliveries.map(delivery => <DeliveryCard key={delivery.id} delivery={delivery} />)}
+    <div className="deliveries-container">
+      <h1 className="dashboard-title">Driver Dashboard - Deliveries</h1>
+
+      <div className="form-container">
+        <DeliveryForm onCreated={fetchDeliveries} />
+      </div>
+
+      <div className="deliveries-list">
+        {deliveries.map(delivery => (
+          <div key={delivery.id} className="delivery-card-wrapper">
+            <DeliveryCard delivery={delivery} />
+          </div>
+        ))}
       </div>
     </div>
   );

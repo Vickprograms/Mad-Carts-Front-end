@@ -1,30 +1,65 @@
+// src/pages/AdminDashboard.jsx
 import React from "react";
-import Navbar from "../components/Navbar";
+import { useOrders } from "../hooks/useOrders";
+import "./AdminDashboard.css";
 
-const DashboardAdmin = () => {
+const AdminDashboard = () => {
+  const {
+    orders,
+    loading,
+    error,
+    getStatusColor,
+    getStatusIcon,
+    getTotalItems,
+    updateOrder
+  } = useOrders();
+
+  const handleMarkAsShipped = async (order) => {
+    try {
+      await updateOrder({ ...order, status: "Shipped" });
+      alert(`Order #${order.id} marked as shipped.`);
+    } catch (err) {
+      alert("Failed to update order status.");
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-200">
-      <Navbar />
-      <main className="p-6">
-        <header className="bg-white shadow p-4 rounded-xl mb-6">
-          <h1 className="text-2xl font-bold text-gray-800">Admin Dashboard</h1>
-        </header>
-        <section className="bg-white p-6 rounded-xl shadow">
-          <p className="text-gray-700 mb-4">
-            Welcome! Manage users, products, and oversee platform activity here.
-          </p>
-          <div className="flex space-x-4">
-            <button className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
-              Manage Users
-            </button>
-            <button className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
-              Manage Products
-            </button>
+    <div className="admin-dashboard">
+      <h1 className="admin-title">Admin Dashboard</h1>
+
+      {loading && <p>Loading orders...</p>}
+      {error && <p className="admin-error">{error}</p>}
+
+      <div className="order-grid">
+        {orders.map((order) => (
+          <div key={order.id} className="order-card">
+            <div className="order-header">
+              <h2 className="order-id">Order #{order.id}</h2>
+              <span className={`order-status ${getStatusColor(order.status)}`}>
+                Status: {order.status}
+              </span>
+            </div>
+
+            <div className="order-summary">
+              {getStatusIcon(order.status)} {getTotalItems(order)} item(s)
+            </div>
+
+            <p className="order-text">Customer: {order.customer_name || "N/A"}</p>
+            <p className="order-text">Address: {order.address || "N/A"}</p>
+
+            {order.status?.toLowerCase() === "pending" && (
+              <button
+                onClick={() => handleMarkAsShipped(order)}
+                className="ship-button"
+              >
+                Mark as Shipped
+              </button>
+            )}
           </div>
-        </section>
-      </main>
+        ))}
+      </div>
     </div>
   );
 };
 
-export default DashboardAdmin;
+export default AdminDashboard;

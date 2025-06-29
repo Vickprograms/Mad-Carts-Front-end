@@ -1,0 +1,76 @@
+/* src/pages/Login.css */
+.login-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #0B0C10;
+}
+
+.login-card {
+  background-color: #1C1F26;
+  padding: 2rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  border: 1px solid #2A2C34;
+  width: 100%;
+  max-width: 400px;
+  color: #F5F5F5;
+}
+
+.login-title {
+  font-size: 1.75rem;
+  font-weight: bold;
+  color: #FFD700;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.login-input {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  background-color: #0B0C10;
+  border: 1px solid #2A2C34;
+  border-radius: 0.5rem;
+  color: #F5F5F5;
+}
+
+.login-input::placeholder {
+  color: #AAAAAA;
+}
+
+.login-button {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #32CD32;
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  border-radius: 0.5rem;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.login-button:hover {
+  background-color: #2ea62e;
+}
+
+.login-button.disabled {
+  background-color: #555;
+  cursor: not-allowed;
+}
+
+.login-message {
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 0.875rem;
+}
+
+.login-message.success {
+  color: #32CD32;
+}
+
+.login-message.error {
+  color: #FF4136;
+}

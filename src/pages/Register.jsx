@@ -2,6 +2,7 @@ import React, { useState, useContext } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../context/AuthContext";
+import './Register.css';
 
 const Register = () => {
   const { login } = useContext(AuthContext);
@@ -24,13 +25,11 @@ const Register = () => {
   };
 
   const handleRedirect = (role) => {
-    e.preventDefault()
     setIsRedirecting(true);
     setMessage("Registration successful! Redirecting...");
-
     setTimeout(() => {
       if (role === "customer") {
-        window.location.href = "http://localhost:3000/";
+        navigate("/products");
       } else if (role === "driver") {
         navigate("/driver");
       } else if (role === "admin") {
@@ -45,34 +44,29 @@ const Register = () => {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      // Register user
       await axios.post("http://127.0.0.1:5555/api/auth/register", formData);
 
-      // Login user
       const loginRes = await axios.post("http://127.0.0.1:5555/api/auth/login", {
         email: formData.email,
         password: formData.password,
       });
 
       const { access_token } = loginRes.data;
-      login(access_token); // save in AuthContext
+      login(access_token);
 
       const decoded = JSON.parse(atob(access_token.split(".")[1]));
       const role = decoded?.sub?.role;
       handleRedirect(role);
     } catch (err) {
       setMessage(err.response?.data?.error || "Registration failed.");
-      setIsSubmitting(false); // Allow retry
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-6 rounded-xl shadow-md w-full max-w-md"
-      >
-        <h2 className="text-2xl font-semibold mb-4 text-center">Register</h2>
+    <div className="register-container">
+      <form onSubmit={handleSubmit} className="register-card">
+        <h2 className="register-title">Register</h2>
 
         {["email", "username", "password", "phone_no"].map((field) => (
           <input
@@ -82,7 +76,7 @@ const Register = () => {
             placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
             value={formData[field]}
             onChange={handleChange}
-            className="block w-full p-2 mb-4 border rounded"
+            className="register-input"
             required
           />
         ))}
@@ -91,7 +85,7 @@ const Register = () => {
           name="role"
           value={formData.role}
           onChange={handleChange}
-          className="block w-full p-2 mb-4 border rounded"
+          className="register-input"
           required
         >
           <option value="customer">Customer</option>
@@ -102,19 +96,21 @@ const Register = () => {
         <button
           type="submit"
           disabled={isSubmitting || isRedirecting}
-          className={`py-2 px-4 rounded w-full text-white ${
-            isRedirecting
-              ? "bg-gray-500 cursor-not-allowed"
-              : "bg-blue-600 hover:bg-blue-700"
-          }`}
+          className={`register-button ${isRedirecting ? "disabled" : ""}`}
         >
-          {isRedirecting ? "Redirecting..." : isSubmitting ? "Submitting..." : "Register"}
+          {isRedirecting
+            ? "Redirecting..."
+            : isSubmitting
+            ? "Submitting..."
+            : "Register"}
         </button>
 
         {message && (
           <p
-            className={`mt-4 text-sm text-center ${
-              message.toLowerCase().includes("success") ? "text-green-600" : "text-red-600"
+            className={`register-message ${
+              message.toLowerCase().includes("success")
+                ? "success"
+                : "error"
             }`}
           >
             {message}
