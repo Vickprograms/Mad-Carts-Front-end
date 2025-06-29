@@ -48,7 +48,6 @@ export const useCart = () => {
     try {
 
       if (!currentCart) {
-        console.log(' No cart exists, creating one...');
         await createCart();
         await fetchMyCart();
       }

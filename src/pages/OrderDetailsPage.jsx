@@ -41,7 +41,6 @@ const OrderDetailsPage = () => {
       await fetchOrder(orderId);
       setView('details');
     } catch (error) {
-      console.error('Error fetching order:', error);
       alert('Failed to load order details');
     }
   };

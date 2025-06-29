@@ -2,6 +2,7 @@ const API_BASE = 'http://127.0.0.1:5555/api/cart';
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem('token');
+  
   const headers = {
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${token}`
@@ -26,7 +27,7 @@ export const createCart = async () => {
   const response = await fetch(`${API_BASE}/`, {
     method: 'POST',
     headers: getAuthHeaders(),
-    body: JSON.stringify({}) // send empty object just in case
+    body: JSON.stringify({})
   });
 
   if (!response.ok) {
@@ -56,7 +57,7 @@ export const addItemToCart = async (productId, price, quantity = 1) => {
 
 export const updateCartItem = async (productId, quantity) => {
   const response = await fetch(`${API_BASE}/update-item`, {
-    method: 'PATCH', // PATCH instead of PUT
+    method: 'PATCH',
     headers: getAuthHeaders(),
     body: JSON.stringify({
       product_id: productId,
@@ -75,7 +76,6 @@ export const removeCartItem = async (productId) => {
   const response = await fetch(`${API_BASE}/remove-item?product_id=${encodeURIComponent(productId)}`, {
     method: 'DELETE',
     headers: getAuthHeaders()
-    // No body
   });
 
   if (!response.ok) {
