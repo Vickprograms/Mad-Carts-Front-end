@@ -161,23 +161,22 @@ const CartPage = () => {
       {showSuccess && <SuccessModal orderId={orderId} loading={redirecting} onClose={() => { setShowSuccess(false); navigate('/'); }} />}
       {showError && <ErrorModal message={errorMsg} onClose={() => setShowError(false)} />}
       <div className="cart-container">
-        <div className="cart-header">
-          <h1>Shopping Cart</h1>
-          <button
-            onClick={() => navigate('/')}
-            className="cart-back-btn"
-          >
-            ← Back to Shopping
-          </button>
-        </div>
-        {cartLoading ? (
-          <div className="cart-loading">
-            <RefreshCw size={64} />
-            <p>Loading cart...</p>
+        <div className="cart-main-content">
+          <div className="cart-header">
+            <h1>Shopping Cart</h1>
+            <button
+              onClick={() => navigate('/')}
+              className="cart-back-btn"
+            >
+              ← Back to Shopping
+            </button>
           </div>
-        ) : currentCart ? (
-          <div className="cart-main-grid">
-            {/* Cart Items */}
+          {cartLoading ? (
+            <div className="cart-loading">
+              <RefreshCw size={64} />
+              <p>Loading cart...</p>
+            </div>
+          ) : currentCart ? (
             <div className="cart-items-section">
               <CartList
                 cart={currentCart}
@@ -185,32 +184,28 @@ const CartPage = () => {
                 onRemoveItem={handleRemoveItem}
               />
             </div>
-            {/* Cart Summary & Actions */}
-            <div className="cart-summary-section">
-              <CartSummary
-                cart={currentCart}
-                totalAmount={totalAmount}
-                totalItems={totalItems}
-              />
-              <CartActions
-                cart={currentCart}
-                onCheckout={handleCheckout}
-                onClearCart={handleClearCart}
-                loading={orderLoading || cartLoading || redirecting}
-              />
-              {orderError && (
-                <div className="cart-error">
-                  <AlertCircle size={20} />
-                  <span>{orderError}</span>
-                </div>
-              )}
+          ) : null}
+        </div>
+        {/* Cart Summary & Actions */}
+        <div className="cart-summary-section">
+          <CartSummary
+            cart={currentCart}
+            totalAmount={totalAmount}
+            totalItems={totalItems}
+          />
+          <CartActions
+            cart={currentCart}
+            onCheckout={handleCheckout}
+            onClearCart={handleClearCart}
+            loading={orderLoading || cartLoading || redirecting}
+          />
+          {orderError && (
+            <div className="cart-error">
+              <AlertCircle size={20} />
+              <span>{orderError}</span>
             </div>
-          </div>
-        ) : (
-          <div className="cart-empty">
-            <p>Your cart is empty.</p>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
