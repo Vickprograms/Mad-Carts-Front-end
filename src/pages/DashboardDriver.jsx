@@ -1,9 +1,12 @@
 // src/pages/DashboardDriver.jsx
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import "./DashboardDriver.css"; // Import the CSS file
+import "./DashboardDriver.css";
 
 const DashboardDriver = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="driver-dashboard-container">
       <Navbar />
@@ -19,7 +22,12 @@ const DashboardDriver = () => {
           <p className="driver-description">
             Check your delivery assignments or update delivery statuses.
           </p>
-          <button className="driver-button">View Deliveries</button>
+          <button
+            className="driver-button"
+            onClick={() => navigate("/deliveries")}
+          >
+            View Deliveries
+          </button>
         </section>
       </main>
     </div>

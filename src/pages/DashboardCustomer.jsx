@@ -1,27 +1,33 @@
-// src/pages/DashboardCustomer.jsx
+// src/pages/DashboardDriver.jsx
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import "./DashboardCustomer.css"; // Import the CSS file
+import "./DashboardDriver.css";
 
-const DashboardCustomer = () => {
+const DashboardDriver = () => {
+  const navigate = useNavigate();
+
+  const handleViewDeliveries = () => {
+    navigate("/deliveries");
+  };
+
   return (
-    <div className="customer-dashboard-container">
+    <div className="driver-dashboard-container">
       <Navbar />
-      <main className="dashboard-main">
-        <header className="dashboard-header">
-          <h1 className="dashboard-title">Customer Dashboard</h1>
+      <main className="driver-main">
+        <header className="driver-header">
+          <h1 className="driver-title">Driver Dashboard</h1>
+          <p className="driver-subtext">
+            Welcome back! View and manage your assigned deliveries.
+          </p>
         </header>
 
-        <section className="dashboard-section">
-          <p className="dashboard-description">
-            Welcome! Here you can browse products, manage your cart, and track your orders.
+        <section className="driver-section">
+          <p className="driver-description">
+            Check your delivery assignments or update delivery statuses.
           </p>
-
-          <button
-            className="dashboard-button"
-            onClick={() => (window.location.href = "/products")}
-          >
-            Browse Products
+          <button className="driver-button" onClick={handleViewDeliveries}>
+            View Deliveries
           </button>
         </section>
       </main>
@@ -29,4 +35,4 @@ const DashboardCustomer = () => {
   );
 };
 
-export default DashboardCustomer;
+export default DashboardDriver;

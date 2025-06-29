@@ -1,7 +1,7 @@
 // src/pages/AdminDashboard.jsx
 import React from "react";
 import { useOrders } from "../hooks/useOrders";
-import "./AdminDashboard.css";
+import "./DashboardAdmin.css";
 
 const AdminDashboard = () => {
   const {

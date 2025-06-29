@@ -1,3 +1,4 @@
+// src/pages/Login.jsx
 import React, { useState, useContext } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -24,7 +25,7 @@ const Login = () => {
       } else if (role === "driver") {
         navigate("/driver");
       } else if (role === "admin") {
-        navigate("/admin");
+        navigate("/dashboard/admin");
       } else {
         setMessage("Unknown role. Please contact support.");
       }
@@ -41,7 +42,8 @@ const Login = () => {
       login(access_token);
 
       const decoded = JSON.parse(atob(access_token.split('.')[1]));
-      const role = decoded?.sub?.role;
+      const role = decoded?.role; 
+
       if (!role) throw new Error("Role missing in token.");
 
       handleRedirect(role);

@@ -1,8 +1,9 @@
+// src/pages/Register.jsx
 import React, { useState, useContext } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../context/AuthContext";
-import './Register.css';
+import "./Register.css";
 
 const Register = () => {
   const { login } = useContext(AuthContext);
@@ -19,6 +20,7 @@ const Register = () => {
   const [isRedirecting, setIsRedirecting] = useState(false);
   const navigate = useNavigate();
 
+  // ✅ Fix: make sure handleChange is defined
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setMessage("");
@@ -29,11 +31,11 @@ const Register = () => {
     setMessage("Registration successful! Redirecting...");
     setTimeout(() => {
       if (role === "customer") {
-        navigate("/products");
+        navigate("/dashboard/customer");
       } else if (role === "driver") {
         navigate("/driver");
       } else if (role === "admin") {
-        navigate("/admin");
+        navigate("/dashboard/admin");
       } else {
         setMessage("Unknown role. Contact support.");
       }
@@ -44,8 +46,10 @@ const Register = () => {
     e.preventDefault();
     setIsSubmitting(true);
     try {
+      // Register the user
       await axios.post("http://127.0.0.1:5555/api/auth/register", formData);
 
+      // Then log them in immediately
       const loginRes = await axios.post("http://127.0.0.1:5555/api/auth/login", {
         email: formData.email,
         password: formData.password,
@@ -56,6 +60,7 @@ const Register = () => {
 
       const decoded = JSON.parse(atob(access_token.split(".")[1]));
       const role = decoded?.sub?.role;
+
       handleRedirect(role);
     } catch (err) {
       setMessage(err.response?.data?.error || "Registration failed.");
@@ -68,12 +73,13 @@ const Register = () => {
       <form onSubmit={handleSubmit} className="register-card">
         <h2 className="register-title">Register</h2>
 
+        {/* Dynamic input fields for email, username, password, phone_no */}
         {["email", "username", "password", "phone_no"].map((field) => (
           <input
             key={field}
             type={field === "password" ? "password" : "text"}
             name={field}
-            placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
+            placeholder={field.charAt(0).toUpperCase() + field.slice(1).replace("_", " ")}
             value={formData[field]}
             onChange={handleChange}
             className="register-input"
@@ -81,6 +87,7 @@ const Register = () => {
           />
         ))}
 
+        {/* Role selection */}
         <select
           name="role"
           value={formData.role}
@@ -93,6 +100,7 @@ const Register = () => {
           <option value="admin">Admin</option>
         </select>
 
+        {/* Submit button */}
         <button
           type="submit"
           disabled={isSubmitting || isRedirecting}
@@ -105,6 +113,7 @@ const Register = () => {
             : "Register"}
         </button>
 
+        {/* Message display */}
         {message && (
           <p
             className={`register-message ${
