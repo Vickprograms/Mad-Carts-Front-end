@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchProducts } from "../services/products";
+import { fetchAllProducts } from "../services/products";
 import ProductCard from "../components/ProductCard";
 import HomeProducts from "../components/HomeProducts.jsx";
 import Searchbar from "../components/Searchbar.jsx";
@@ -10,18 +10,15 @@ export default function Products() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const getProducts = async () => {
-      try {
-        const data = await fetchProducts();
+    fetchAllProducts()
+      .then((data) => {
         setProducts(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
         setLoading(false);
-      }
-    };
-
-    getProducts();
+      })
+      .catch((err) => {
+        setError("Failed to fetch products");
+        setLoading(false);
+      });
   }, []);
 
   const styles = {
