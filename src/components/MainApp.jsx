@@ -6,11 +6,12 @@ import Searchbar from './Searchbar';
 function MainApp() {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const BASE_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await axios.get('http://127.0.0.1:5555/categories');
+        const res = await axios.get(`${BASE_URL}/categories`);
         setCategories(res.data);
       } catch (err) {
         console.error("Error fetching categories:", err);
@@ -21,8 +22,9 @@ function MainApp() {
   }, []);
 
   const logRecentView = (productId) => {
-    axios.post('http://127.0.0.1:5555/create-history', {
-      id: productId
+    axios.post(`${BASE_URL}/create-history`, {
+      product_id: productId,
+      user_id: user?.id,
     }).catch(err => {
       console.error('Failed to log recent view:', err);
     });

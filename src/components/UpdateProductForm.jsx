@@ -7,6 +7,8 @@ const UpdateProductForm = ({ selectedProduct, setSelectedProduct }) => {
   const [imageFile, setImageFile] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
 
+  const BASE_URL = import.meta.env.VITE_API_URL;
+
   const handleInputChange = (e) => {
     setFormState({ ...formState, [e.target.name]: e.target.value });
   };
@@ -32,7 +34,7 @@ const UpdateProductForm = ({ selectedProduct, setSelectedProduct }) => {
 
     try {
       const response = await axios.put(
-        `http://127.0.0.1:5555/products/${selectedProduct.id}`,
+        `${BASE_URL}/products/${selectedProduct.id}`,
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );

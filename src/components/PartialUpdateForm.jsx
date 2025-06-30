@@ -4,6 +4,7 @@ import Searchbar from './Searchbar';
 
 const PartialUpdateForm = ({ selectedProduct, setSelectedProduct }) => {
   const [fields, setFields] = useState({});
+  const BASE_URL = import.meta.env.VITE_API_URL;
 
   const handleChange = (e) => {
     setFields(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -19,7 +20,7 @@ const PartialUpdateForm = ({ selectedProduct, setSelectedProduct }) => {
         if (fields[key]) payload.append(key, fields[key]);
       }
 
-      await axios.patch(`http://127.0.0.1:5555/products/${selectedProduct.id}`, payload);
+      await axios.patch(`${BASE_URL}/products/${selectedProduct.id}`, payload);
       alert('Product partially updated!');
       setFields({});
     } catch (err) {

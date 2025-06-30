@@ -18,6 +18,8 @@ const Register = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
+  const BASE_URL = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
     if (user) {
       if (user.role === "customer") {
@@ -41,9 +43,9 @@ const Register = () => {
     setMessage("");
     
     try {
-      await axios.post("http://127.0.0.1:5555/api/auth/register", formData);
+      await axios.post(`${BASE_URL}/api/auth/register`, formData);
 
-      const loginRes = await axios.post("http://127.0.0.1:5555/api/auth/login", {
+      const loginRes = await axios.post(`${BASE_URL}/api/auth/login`, {
         email: formData.email,
         password: formData.password,
       });

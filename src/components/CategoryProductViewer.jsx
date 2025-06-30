@@ -4,12 +4,13 @@ import React, { useEffect, useState } from 'react';
 function CategoryProductViewer({ category, logRecentView }) {
   const [products, setProducts] = useState([]);
   const [selected, setSelected] = useState(null);
+  const BASE_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     async function fetchProducts() {
       try {
         console.log("Fetching products for category:", category);
-        const res = await axios.get(`http://127.0.0.1:5555/category`, {
+        const res = await axios.get(`${BASE_URL}/category`, {
           params: { q: category }
         });
         console.log("Fetched products:", res.data);

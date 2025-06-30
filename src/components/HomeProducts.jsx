@@ -9,10 +9,12 @@ function HomeProducts() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const BASE_URL = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await axios.get('http://127.0.0.1:5555/api/products/categories');
+        const res = await axios.get(`${BASE_URL}/api/products/categories`);
         setCategories(res.data);
       } catch (err) {
         setError('Failed to load categories');
@@ -26,7 +28,7 @@ function HomeProducts() {
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(`http://127.0.0.1:5555/api/products/category?q=${encodeURIComponent(selectedCategory)}`);
+        const res = await axios.get(`${BASE_URL}/api/products/category?q=${encodeURIComponent(selectedCategory)}`);
         setProducts(res.data);
         setSelectedProduct(null);
         setError(null);
@@ -136,7 +138,7 @@ function HomeProducts() {
                   onClick={() => handleProductClick(p)}
                 >
                   <img
-                    src={`http://127.0.0.1:5555/static/uploads/${p.media}`}
+                    src={`${BASE_URL}/static/uploads/${p.media}`}
                     alt={p.name}
                     style={styles.productImage}
                   />
@@ -156,7 +158,7 @@ function HomeProducts() {
           <button onClick={backToProducts} style={styles.backButton}>← Back to {selectedCategory}</button>
           <h2 style={{ color: '#FFD700' }}>{selectedProduct.name}</h2>
           <img
-            src={`http://127.0.0.1:5555/static/uploads/${selectedProduct.media}`}
+            src={`${BASE_URL}/static/uploads/${selectedProduct.media}`}
             alt={selectedProduct.name}
             style={{ width: '300px', borderRadius: '8px', marginBottom: '1rem' }}
           />

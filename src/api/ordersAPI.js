@@ -1,4 +1,4 @@
-const API_BASE = 'http://127.0.0.1:5555/api/orders';
+const API_BASE = `${import.meta.env.VITE_API_URL}/api/orders`;
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem('token');

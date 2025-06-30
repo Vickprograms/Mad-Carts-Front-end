@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+const BASE_URL = import.meta.env.VITE_API_URL;
+
 const initialForm = { username: "", email: "", password: "", phone_no: "", role: "customer" };
 
 const AdminUsers = () => {
@@ -18,7 +20,7 @@ const AdminUsers = () => {
     setError("");
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://127.0.0.1:5555/api/users/", {
+      const res = await axios.get(`${BASE_URL}/api/users/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUsers(res.data);
@@ -43,12 +45,12 @@ const AdminUsers = () => {
     try {
       if (editingId) {
         // Update user
-        await axios.put(`http://127.0.0.1:5555/api/users/${editingId}`, form, {
+        await axios.put(`${BASE_URL}/api/users/${editingId}`, form, {
           headers: { Authorization: `Bearer ${token}` },
         });
       } else {
         // Create user
-        await axios.post("http://127.0.0.1:5555/api/users/", form, {
+        await axios.post(`${BASE_URL}/api/users/`, form, {
           headers: { Authorization: `Bearer ${token}` },
         });
       }
@@ -70,7 +72,7 @@ const AdminUsers = () => {
     if (!window.confirm("Are you sure you want to delete this user?")) return;
     const token = localStorage.getItem("token");
     try {
-      await axios.delete(`http://127.0.0.1:5555/api/users/${id}`, {
+      await axios.delete(`${BASE_URL}/api/users/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       fetchUsers();

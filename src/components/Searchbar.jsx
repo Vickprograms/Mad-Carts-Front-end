@@ -15,7 +15,8 @@ const Searchbar = ({ isAdmin, onSelectProduct }) => {
   const containerRef = useRef(null);
   const debounceRef = useRef(null);
 
- 
+  const BASE_URL = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
     const timeout = { current: null };
 
@@ -47,7 +48,7 @@ const Searchbar = ({ isAdmin, onSelectProduct }) => {
 
   const fetchSuggestions = async (query) => {
     try {
-      const res = await axios.get(`http://127.0.0.1:5555/api/products/autocomplete?q=${query}`);
+      const res = await axios.get(`${BASE_URL}/api/products/autocomplete?q=${query}`);
       setSuggestions(res.data);
       setShowSuggestions(true);
     } catch {
@@ -58,7 +59,7 @@ const Searchbar = ({ isAdmin, onSelectProduct }) => {
   const fetchResults = async (query) => {
     setLoading(true);
     try {
-      const res = await axios.get(`http://127.0.0.1:5555/api/products/autocomplete?q=${query}`);
+      const res = await axios.get(`${BASE_URL}/api/products/autocomplete?q=${query}`);
       setResults(res.data);
       if (user) await logSearchHistory(query, localStorage.getItem('token'));
     } catch {
@@ -94,7 +95,7 @@ const Searchbar = ({ isAdmin, onSelectProduct }) => {
 
   const handleSelect = async (item) => {
     try {
-      const res = await axios.get(`http://127.0.0.1:5555/api/products/${item.id}`);
+      const res = await axios.get(`${BASE_URL}/api/products/${item.id}`);
       const product = res.data;
       setSelectedProduct(product);
       onSelectProduct?.(product);
@@ -203,7 +204,7 @@ const Searchbar = ({ isAdmin, onSelectProduct }) => {
             <button
               onClick={async () => {
                 try {
-                  await axios.delete(`http://127.0.0.1:5555/api/products/${selectedProduct.id}`);
+                  await axios.delete(`${BASE_URL}/api/products/${selectedProduct.id}`);
                   alert('Product deleted');
                   setSelectedProduct(null);
                   setResults((prev) => prev.filter((p) => p.id !== selectedProduct.id));

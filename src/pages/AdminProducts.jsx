@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+const BASE_URL = import.meta.env.VITE_API_URL;
+
 const initialForm = {
   name: "",
   price: "",
@@ -26,7 +28,7 @@ const AdminProducts = () => {
     setError("");
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://127.0.0.1:5555/api/products/products", {
+      const res = await axios.get(`${BASE_URL}/api/products/products`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
       setProducts(res.data);
@@ -49,15 +51,19 @@ const AdminProducts = () => {
     setFormError("");
     const token = localStorage.getItem("token");
     try {
+      const formData = new FormData();
+      for (const key in form) {
+        formData.append(key, form[key]);
+      }
       if (editingId) {
         // Update product
-        await axios.put(`http://127.0.0.1:5555/api/products/${editingId}`, form, {
-          headers: { Authorization: `Bearer ${token}` },
+        await axios.put(`${BASE_URL}/api/products/${editingId}`, formData, {
+          headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' },
         });
       } else {
         // Create product
-        await axios.post("http://127.0.0.1:5555/api/products/create", form, {
-          headers: { Authorization: `Bearer ${token}` },
+        await axios.post(`${BASE_URL}/api/products/create`, formData, {
+          headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' },
         });
       }
       setForm(initialForm);
@@ -86,7 +92,7 @@ const AdminProducts = () => {
     if (!window.confirm("Are you sure you want to delete this product?")) return;
     const token = localStorage.getItem("token");
     try {
-      await axios.delete(`http://127.0.0.1:5555/api/products/${id}`, {
+      await axios.delete(`${BASE_URL}/api/products/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       fetchProducts();

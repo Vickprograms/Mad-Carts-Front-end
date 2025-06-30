@@ -3,13 +3,15 @@ import axios from 'axios';
 import Searchbar from './Searchbar';
 
 const DeleteProductForm = ({ selectedProduct, setSelectedProduct }) => {
+  const BASE_URL = import.meta.env.VITE_API_URL;
+
   const handleDelete = async () => {
     if (!selectedProduct) return;
     const confirmed = window.confirm(`Delete product "${selectedProduct.name}"?`);
     if (!confirmed) return;
 
     try {
-      await axios.delete(`http://127.0.0.1:5555/products/${selectedProduct.id}`);
+      await axios.delete(`${BASE_URL}/products/${selectedProduct.id}`);
       alert('Product deleted!');
       setSelectedProduct(null);
     } catch (error) {

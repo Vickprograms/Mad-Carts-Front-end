@@ -10,6 +10,7 @@ const Login = () => {
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
+  const BASE_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     if (user) {
@@ -34,7 +35,7 @@ const Login = () => {
     setMessage("");
     
     try {
-      const res = await axios.post("http://127.0.0.1:5555/api/auth/login", formData);
+      const res = await axios.post(`${BASE_URL}/api/auth/login`, formData);
       const { access_token, user } = res.data;
 
       const role = user?.role;

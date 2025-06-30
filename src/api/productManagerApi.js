@@ -1,7 +1,6 @@
-
 import axios from 'axios';
 
-const BASE_URL = 'http://127.0.0.1:5555/api';
+const BASE_URL = `${import.meta.env.VITE_API_URL}/api`;
 
 export const createProduct = (formData) =>
   axios.post(`${BASE_URL}/products`, formData, {
@@ -17,7 +16,6 @@ export const partialUpdateProduct = (id, formData) =>
   axios.patch(`${BASE_URL}/products/${id}`, formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
   });
-
 
 export const fetchAllProducts = async () => {
   const res = await axios.get(`${BASE_URL}/products`);
@@ -49,29 +47,21 @@ export const fetchUserSearchHistory = async (token) => {
 export const logSearchHistory = async (search_term, token) => {
   try {
     const payload = { search_term: String(search_term) };
-
-    console.log("📦 Posting:", JSON.stringify(payload));
-    console.log("🪪 Token:", token);
-
     const res = await axios.post(
-      'http://127.0.0.1:5555/api/search/create',
-      payload, // ✅ Send object, not string
+      `${BASE_URL}/search/create`,
+      payload,
       {
         headers: {
-          Authorization: `Bearer ${token}`, // ✅ Don't rename or reassign
+          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       }
     );
-
-    console.log("✅ Search logged:", res.data);
     return res.data;
   } catch (err) {
-    console.error("logSearchHistory failed:", err.response?.data || err.message);
     throw err;
   }
 };
-
 
 export const fetchCategories = async () => {
   const res = await axios.get(`${BASE_URL}/products/categories`);
@@ -95,7 +85,6 @@ export const logRecentView = async (productId, token) => {
     );
     return res.data;
   } catch (err) {
-    console.error("Failed to log recent view:", err);
     throw err;
   }
 };

@@ -33,6 +33,8 @@ const CreateProductForm = () => {
       formData.append(key, form[key]);
     }
 
+    const BASE_URL = import.meta.env.VITE_API_URL;
+
     try {
       
       for (let pair of formData.entries()) {
@@ -40,7 +42,7 @@ const CreateProductForm = () => {
       }
 
       await axios.post(
-        'http://127.0.0.1:5555/api/products/create',
+        `${BASE_URL}/api/products/create`,
         formData,
         {
           headers: {
